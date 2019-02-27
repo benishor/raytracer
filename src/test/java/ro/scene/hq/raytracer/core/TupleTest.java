@@ -5,8 +5,7 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static ro.scene.hq.raytracer.core.Tuple.point;
-import static ro.scene.hq.raytracer.core.Tuple.vector;
+import static ro.scene.hq.raytracer.core.Tuple.*;
 
 public class TupleTest {
 
@@ -84,7 +83,7 @@ public class TupleTest {
     @Test
     public void negateTuple() {
         Tuple a = new Tuple(1, -2, 3, -4);
-        Tuple result = a.negate();
+        Tuple result = a.neg();
 
         assertThat(result, is(equalTo(new Tuple(-1, 2, -3, 4))));
     }
@@ -111,5 +110,44 @@ public class TupleTest {
         Tuple result = a.div(2);
 
         assertThat(result, is(equalTo(new Tuple(0.5, -1, 1.5, -2))));
+    }
+
+    @Test
+    public void mag() {
+        assertThat(Tuple.mag(vector(1, 0, 0)), is(equalTo(1.0)));
+        assertThat(Tuple.mag(vector(0, 1, 0)), is(equalTo(1.0)));
+        assertThat(Tuple.mag(vector(0, 0, 1)), is(equalTo(1.0)));
+        assertThat(Tuple.mag(vector(1, 2, 3)), is(equalTo(Math.sqrt(14))));
+    }
+
+    @Test
+    public void normalization() {
+        Tuple v1 = vector(4, 0, 0);
+        assertThat(normalize(v1), is(equalTo(vector(1, 0, 0))));
+
+        Tuple v2 = vector(1, 2, 3);
+        double denominator = Math.sqrt(14.0);
+        assertThat(normalize(v2), is(equalTo(vector(v2.x / denominator, v2.y / denominator, v2.z / denominator))));
+    }
+
+    @Test
+    public void normalization_yieldsMagnitudeOf1() {
+        Tuple n = normalize(vector(1, 2, 3));
+        assertThat(Tuple.mag(n), is(equalTo(1.0)));
+    }
+
+    @Test
+    public void dotProduct() {
+        double dp = dot(vector(1, 2, 3), vector(2, 3, 4));
+        assertThat(dp, is(equalTo(20.0)));
+    }
+
+    @Test
+    public void crossProduct() {
+        Tuple a = vector(1, 2, 3);
+        Tuple b = vector(2, 3, 4);
+
+        assertThat(cross(a, b), is(equalTo(vector(-1, 2, -1))));
+        assertThat(cross(b, a), is(equalTo(vector(1, -2, 1))));
     }
 }

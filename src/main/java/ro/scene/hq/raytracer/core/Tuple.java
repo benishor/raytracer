@@ -31,6 +31,26 @@ public class Tuple {
         return new Tuple(x, y, z, 0);
     }
 
+    public Tuple add(Tuple other) {
+        return new Tuple(x + other.x, y + other.y, z + other.z, w + other.w);
+    }
+
+    public Tuple sub(Tuple other) {
+        return new Tuple(x - other.x, y - other.y, z - other.z, w - other.w);
+    }
+
+    public Tuple neg() {
+        return new Tuple(-x, -y, -z, -w);
+    }
+
+    public Tuple mul(double scalar) {
+        return new Tuple(x * scalar, y * scalar, z * scalar, w * scalar);
+    }
+
+    public Tuple div(double scalar) {
+        return new Tuple(x / scalar, y / scalar, z / scalar, w / scalar);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -57,23 +77,24 @@ public class Tuple {
                 '}';
     }
 
-    public Tuple add(Tuple other) {
-        return new Tuple(x + other.x, y + other.y, z + other.z, w + other.w);
+    public static double mag(Tuple t) {
+        return Math.sqrt(t.x * t.x + t.y * t.y + t.z * t.z + t.w * t.w);
     }
 
-    public Tuple sub(Tuple other) {
-        return new Tuple(x - other.x, y - other.y, z - other.z, w - other.w);
+    public static Tuple normalize(Tuple t) {
+        double magnitude = mag(t);
+        return vector(t.x / magnitude, t.y / magnitude, t.z / magnitude);
     }
 
-    public Tuple negate() {
-        return new Tuple(-x, -y, -z, -w);
+    public static double dot(Tuple a, Tuple b) {
+        return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
     }
 
-    public Tuple mul(double scalar) {
-        return new Tuple(x * scalar, y * scalar, z * scalar, w * scalar);
-    }
-
-    public Tuple div(double scalar) {
-        return new Tuple(x / scalar, y / scalar, z / scalar, w / scalar);
+    public static Tuple cross(Tuple a, Tuple b) {
+        return vector(
+                a.y * b.z - a.z * b.y,
+                a.z * b.x - a.x * b.z,
+                a.x * b.y - a.y * b.x
+        );
     }
 }
