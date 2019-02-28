@@ -175,4 +175,20 @@ public class Matrix {
         return result;
     }
 
+    public static Matrix translation(double x, double y, double z) {
+        Matrix result = identity(4);
+        result.data[0][3] = x;
+        result.data[1][3] = y;
+        result.data[2][3] = z;
+        return result;
+    }
+
+    public static Matrix scaling(double x, double y, double z) {
+        Matrix result = identity(4);
+        result.data[0][0] = x;
+        result.data[1][1] = y;
+        result.data[2][2] = z;
+        return result;
+    }
+
 }

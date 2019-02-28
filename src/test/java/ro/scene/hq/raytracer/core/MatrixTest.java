@@ -7,7 +7,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static ro.scene.hq.raytracer.core.Matrix.*;
-import static ro.scene.hq.raytracer.core.Tuple.areEqual;
+import static ro.scene.hq.raytracer.core.Tuple.*;
 
 public class MatrixTest {
     @Test
@@ -341,6 +341,45 @@ public class MatrixTest {
         Matrix actual = c.mul(inverse(b));
 
         assertMatricesEqual(actual, a);
+    }
+
+    @Test
+    public void multiplyingMatByInverseYieldsUnit() {
+        Matrix a = new Matrix(new double[][]{
+                {3, -9, 7, 3},
+                {3, -8, 2, -9},
+                {-4, 4, 4, 1},
+                {-6, 5, -1, 1}});
+        Matrix actual = a.mul(inverse(a));
+        assertMatricesEqual(actual, identity(4));
+    }
+
+    @Test
+    public void multiplyByTranslationMat() {
+        Matrix transform = translation(5, -3, 2);
+        Tuple p = point(-3, 4, 5);
+        assertThat(transform.mul(p), is(equalTo(point(2, 1, 7))));
+    }
+
+    @Test
+    public void multiplyByInverseOfTranslationMat() {
+        Matrix transform = translation(5, -3, 2);
+        Tuple p = point(-3, 4, 5);
+        assertThat(inverse(transform).mul(p), is(equalTo(point(-8, 7, 3))));
+    }
+
+    @Test
+    public void translationDoesNotAffectVectors() {
+        Matrix transform = translation(5, -3, 2);
+        Tuple v = vector(-3, 4, 5);
+        assertThat(transform.mul(v), is(equalTo(v)));
+    }
+
+    @Test
+    public void scalingAppliedToAPoint() {
+        Matrix transform = scaling(2, 3, 4);
+        Tuple p = point(-4, 6, 8);
+        assertThat(transform.mul(p), is(equalTo(point(-8, 18, 32))));
     }
 
     private void assertMatricesEqual(Matrix a, Matrix b) {
