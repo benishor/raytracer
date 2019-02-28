@@ -435,6 +435,41 @@ public class MatrixTest {
         assertTupleEquals(fullQuarter.mul(p), point(-1, 0, 0));
     }
 
+    @Test
+    public void shearingMovesXInProportionToY() {
+        Matrix transform = shearing(1, 0, 0, 0, 0, 0);
+        Tuple p = point(2, 3, 4);
+        assertThat(transform.mul(p), is(equalTo(point(5, 3, 4))));
+    }
+
+    @Test
+    public void shearingMovesYInProportionToX() {
+        Matrix transform = shearing(0, 0, 1, 0, 0, 0);
+        Tuple p = point(2, 3, 4);
+        assertThat(transform.mul(p), is(equalTo(point(2, 5, 4))));
+    }
+
+    @Test
+    public void shearingMovesYInProportionToZ() {
+        Matrix transform = shearing(0, 0, 0, 1, 0, 0);
+        Tuple p = point(2, 3, 4);
+        assertThat(transform.mul(p), is(equalTo(point(2, 7, 4))));
+    }
+
+    @Test
+    public void shearingMovesZInProportionToX() {
+        Matrix transform = shearing(0, 0, 0, 0, 1, 0);
+        Tuple p = point(2, 3, 4);
+        assertThat(transform.mul(p), is(equalTo(point(2, 3, 6))));
+    }
+
+    @Test
+    public void shearingMovesZInProportionToY() {
+        Matrix transform = shearing(0, 0, 0, 0, 0, 1);
+        Tuple p = point(2, 3, 4);
+        assertThat(transform.mul(p), is(equalTo(point(2, 3, 7))));
+    }
+
     private void assertTupleEquals(Tuple a, Tuple b) {
         Assert.assertThat(areEqual(a.x, b.x), CoreMatchers.is(true));
         Assert.assertThat(areEqual(a.y, b.y), CoreMatchers.is(true));
