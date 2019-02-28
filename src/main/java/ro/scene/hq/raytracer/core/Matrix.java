@@ -191,4 +191,34 @@ public class Matrix {
         return result;
     }
 
+    public static Matrix rotation_x(double radians) {
+        Matrix result = new Matrix(4);
+        result.data[0][0] = result.data[3][3] = 1.0;
+        result.data[1][1] = Math.cos(radians);
+        result.data[1][2] = -Math.sin(radians);
+        result.data[2][1] = Math.sin(radians);
+        result.data[2][2] = Math.cos(radians);
+        return result;
+    }
+
+    public static Matrix rotation_y(double radians) {
+        Matrix result = new Matrix(4);
+        result.data[0][0] = Math.cos(radians);
+        result.data[0][2] = Math.sin(radians);
+        result.data[1][1] = result.data[3][3] = 1.0;
+        result.data[2][0] = -Math.sin(radians);
+        result.data[2][2] = Math.cos(radians);
+        return result;
+    }
+
+    public static Matrix rotation_z(double radians) {
+        Matrix result = new Matrix(4);
+        result.data[0][0] = Math.cos(radians);
+        result.data[0][1] = -Math.sin(radians);
+        result.data[1][0] = Math.sin(radians);
+        result.data[1][1] = Math.cos(radians);
+        result.data[2][2] = result.data[3][3] = 1.0;
+        return result;
+    }
+
 }

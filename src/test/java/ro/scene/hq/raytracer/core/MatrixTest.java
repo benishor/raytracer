@@ -1,5 +1,7 @@
 package ro.scene.hq.raytracer.core;
 
+import org.hamcrest.CoreMatchers;
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -380,6 +382,64 @@ public class MatrixTest {
         Matrix transform = scaling(2, 3, 4);
         Tuple p = point(-4, 6, 8);
         assertThat(transform.mul(p), is(equalTo(point(-8, 18, 32))));
+    }
+
+    @Test
+    public void scalingAppliedToAVector() {
+        Matrix transform = scaling(2, 3, 4);
+        Tuple p = vector(-4, 6, 8);
+        assertThat(transform.mul(p), is(equalTo(vector(-8, 18, 32))));
+    }
+
+    @Test
+    public void multiplyByTheInverseOfAScalingMatrix() {
+        Matrix transform = scaling(2, 3, 4);
+        Tuple p = vector(-4, 6, 8);
+        assertThat(inverse(transform).mul(p), is(equalTo(vector(-2, 2, 2))));
+    }
+
+    @Test
+    public void reflectionIsScalingByNegative() {
+        Matrix transform = scaling(-1, 1, 1);
+        Tuple p = point(2, 3, 4);
+        assertThat(transform.mul(p), is(equalTo(point(-2, 3, 4))));
+    }
+
+    @Test
+    public void rotateAroundX() {
+        Tuple p = point(0, 1, 0);
+        Matrix halfQuarter = rotation_x(Math.PI / 4.0);
+        Matrix fullQuarter = rotation_x(Math.PI / 2.0);
+
+        assertTupleEquals(halfQuarter.mul(p), point(0, Math.sqrt(2.0) / 2.0, Math.sqrt(2.0) / 2.0));
+        assertTupleEquals(fullQuarter.mul(p), point(0, 0, 1));
+    }
+
+    @Test
+    public void rotateAroundY() {
+        Tuple p = point(0, 0, 1);
+        Matrix halfQuarter = rotation_y(Math.PI / 4.0);
+        Matrix fullQuarter = rotation_y(Math.PI / 2.0);
+
+        assertTupleEquals(halfQuarter.mul(p), point(Math.sqrt(2.0) / 2.0, 0, Math.sqrt(2.0) / 2.0));
+        assertTupleEquals(fullQuarter.mul(p), point(1, 0, 0));
+    }
+
+    @Test
+    public void rotateAroundZ() {
+        Tuple p = point(0, 1, 0);
+        Matrix halfQuarter = rotation_z(Math.PI / 4.0);
+        Matrix fullQuarter = rotation_z(Math.PI / 2.0);
+
+        assertTupleEquals(halfQuarter.mul(p), point(-Math.sqrt(2.0) / 2.0, Math.sqrt(2.0) / 2.0, 0));
+        assertTupleEquals(fullQuarter.mul(p), point(-1, 0, 0));
+    }
+
+    private void assertTupleEquals(Tuple a, Tuple b) {
+        Assert.assertThat(areEqual(a.x, b.x), CoreMatchers.is(true));
+        Assert.assertThat(areEqual(a.y, b.y), CoreMatchers.is(true));
+        Assert.assertThat(areEqual(a.z, b.z), CoreMatchers.is(true));
+        Assert.assertThat(areEqual(a.w, b.w), CoreMatchers.is(true));
     }
 
     private void assertMatricesEqual(Matrix a, Matrix b) {
