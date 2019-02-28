@@ -477,6 +477,40 @@ public class MatrixTest {
         Assert.assertThat(areEqual(a.w, b.w), CoreMatchers.is(true));
     }
 
+    @Test
+    public void individualTransformationsAreAppliedInSequence() {
+        Tuple p = point(1, 0, 1);
+        Matrix a = rotation_x(Math.PI / 2.0);
+        Matrix b = scaling(5, 5, 5);
+        Matrix c = translation(10, 5, 7);
+
+        // apply rotation
+        Tuple p2 = a.mul(p);
+        assertTupleEquals(p2, point(1, -1, 0));
+
+        // apply scaling
+        Tuple p3 = b.mul(p2);
+        assertTupleEquals(p3, point(5, -5, 0));
+
+        // apply translation
+        Tuple p4 = c.mul(p3);
+        assertTupleEquals(p4, point(15, 0, 7));
+    }
+
+    @Test
+    public void chainedTransformationsAppliedInReverseOrder() {
+        Tuple p = point(1, 0, 1);
+
+        Matrix a = rotation_x(Math.PI / 2.0);
+        Matrix b = scaling(5, 5, 5);
+        Matrix c = translation(10, 5, 7);
+
+        Matrix transform = c.mul(b).mul(a);
+        Tuple p2 = transform.mul(p);
+
+        assertTupleEquals(p2, point(15, 0, 7));
+    }
+
     private void assertMatricesEqual(Matrix a, Matrix b) {
         assertThat(a.size, is(equalTo(b.size)));
         for (int row = 0; row < a.size; row++) {
