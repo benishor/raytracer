@@ -5,11 +5,9 @@ import java.util.Collections;
 import java.util.List;
 
 import static ro.scene.hq.raytracer.core.Intersection.intersection;
-import static ro.scene.hq.raytracer.core.Matrix.identity;
-import static ro.scene.hq.raytracer.core.Matrix.inverse;
+import static ro.scene.hq.raytracer.core.Matrix.*;
 import static ro.scene.hq.raytracer.core.Ray.transform;
-import static ro.scene.hq.raytracer.core.Tuple.dot;
-import static ro.scene.hq.raytracer.core.Tuple.point;
+import static ro.scene.hq.raytracer.core.Tuple.*;
 
 public class Sphere {
     public double radius = 1.0;
@@ -41,5 +39,13 @@ public class Sphere {
 
     public static void set_transform(Sphere s, Matrix transform) {
         s.transform = transform;
+    }
+
+    public static Tuple normal_at(Sphere s, Tuple point) {
+        Tuple objectPoint = inverse(s.transform).mul(point);
+        Tuple objectNormal = objectPoint.sub(s.origin);
+        Tuple worldNormal = transpose(inverse(s.transform)).mul(objectNormal);
+        worldNormal.w = 0;
+        return normalize(worldNormal);
     }
 }

@@ -190,6 +190,25 @@ public class TupleTest {
         assertTupleEquals(c, color(0.9, 0.2, 0.04));
     }
 
+    @Test
+    public void reflectingAVectorApproachingAt45Deg() {
+        Tuple v = vector(1, -1, 0);
+        Tuple n = vector(0, 1, 0);
+
+        Tuple r = reflect(v, n);
+        assertTupleEquals(r, vector(1, 1, 0));
+    }
+
+    @Test
+    public void reflectingAVectorOffASlantedSurface() {
+        Tuple v = vector(0, -1, 0);
+        Tuple n = vector(Math.sqrt(2.0) / 2.0, Math.sqrt(2.0) / 2.0, 0);
+
+        Tuple r = reflect(v, n);
+        assertTupleEquals(r, vector(1, 0, 0));
+
+    }
+
     private void assertTupleEquals(Tuple a, Tuple b) {
         assertThat(areEqual(a.x, b.x), is(true));
         assertThat(areEqual(a.y, b.y), is(true));

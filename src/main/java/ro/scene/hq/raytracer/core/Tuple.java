@@ -115,4 +115,8 @@ public class Tuple {
                 w * other.w
         );
     }
+
+    public static Tuple reflect(Tuple in, Tuple normal) {
+        return in.sub(normal.mul(2.0).mul(dot(in, normal)));
+    }
 }

@@ -10,11 +10,10 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static ro.scene.hq.raytracer.core.Intersection.*;
+import static ro.scene.hq.raytracer.core.Matrix.*;
 import static ro.scene.hq.raytracer.core.Ray.ray;
-import static ro.scene.hq.raytracer.core.Sphere.intersect;
-import static ro.scene.hq.raytracer.core.Sphere.sphere;
-import static ro.scene.hq.raytracer.core.Tuple.point;
-import static ro.scene.hq.raytracer.core.Tuple.vector;
+import static ro.scene.hq.raytracer.core.Sphere.*;
+import static ro.scene.hq.raytracer.core.Tuple.*;
 
 public class SpheresTest {
     @Test
@@ -147,5 +146,68 @@ public class SpheresTest {
 
         assertThat(h.isPresent(), is(true));
         assertThat(h.get(), is(i4));
+    }
+
+    @Test
+    public void normalOnASphereAtAPointOnXAxis() {
+        Sphere s = sphere();
+        Tuple n = normal_at(s, point(1, 0, 0));
+        assertThat(n, is(equalTo(vector(1, 0, 0))));
+    }
+
+    @Test
+    public void normalOnASphereAtAPointOnYAxis() {
+        Sphere s = sphere();
+        Tuple n = normal_at(s, point(0, 1, 0));
+        assertThat(n, is(equalTo(vector(0, 1, 0))));
+    }
+
+    @Test
+    public void normalOnASphereAtAPointOnZAxis() {
+        Sphere s = sphere();
+        Tuple n = normal_at(s, point(0, 0, 1));
+        assertThat(n, is(equalTo(vector(0, 0, 1))));
+    }
+
+    @Test
+    public void normalOnASphereAtANonAxialPoint() {
+        Sphere s = sphere();
+        Tuple n = normal_at(s, point(Math.sqrt(3) / 3.0, Math.sqrt(3) / 3.0, Math.sqrt(3) / 3.0));
+        assertThat(n, is(equalTo(vector(Math.sqrt(3) / 3.0, Math.sqrt(3) / 3.0, Math.sqrt(3) / 3.0))));
+    }
+
+    @Test
+    public void normalIsANormalizedVector() {
+        Sphere s = sphere();
+        Tuple n = normal_at(s, point(Math.sqrt(3) / 3.0, Math.sqrt(3) / 3.0, Math.sqrt(3) / 3.0));
+
+        assertTupleEquals(n, normalize(n));
+    }
+
+    @Test
+    public void computingNormalOnATranslatedSphere() {
+        Sphere s = sphere();
+        set_transform(s, translation(0, 1, 0));
+
+        Tuple n = normal_at(s, point(0, 1.70711, -0.70711));
+
+        assertTupleEquals(n, vector(0, 0.70711, -0.70711));
+    }
+
+    @Test
+    public void computingNormalOnATransformedSphere() {
+        Sphere s = sphere();
+        set_transform(s, scaling(1, 0.5, 1).mul(rotation_z(Math.PI / 5.0)));
+
+        Tuple n = normal_at(s, point(0, Math.sqrt(2.0) / 2.0, -Math.sqrt(2.0) / 2.0));
+
+        assertTupleEquals(n, vector(0, 0.97014, -0.24254));
+    }
+
+    private void assertTupleEquals(Tuple a, Tuple b) {
+        assertThat(areEqual(a.x, b.x), is(true));
+        assertThat(areEqual(a.y, b.y), is(true));
+        assertThat(areEqual(a.z, b.z), is(true));
+        assertThat(areEqual(a.w, b.w), is(true));
     }
 }
