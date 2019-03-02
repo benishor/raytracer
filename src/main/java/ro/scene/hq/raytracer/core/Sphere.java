@@ -13,6 +13,7 @@ public class Sphere {
     public double radius = 1.0;
     public Tuple origin = point(0, 0, 0);
     public Matrix transform = identity(4);
+    public Material material = Material.material();
 
     public static Sphere sphere() {
         return new Sphere();

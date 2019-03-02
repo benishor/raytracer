@@ -1,0 +1,45 @@
+package ro.scene.hq.raytracer.core;
+
+import static ro.scene.hq.raytracer.core.Tuple.*;
+
+public class Light {
+    public final Tuple intensity;
+    public final Tuple position;
+
+    public Light(Tuple position, Tuple intensity) {
+        this.position = position;
+        this.intensity = intensity;
+    }
+
+    public static Light point_light(Tuple position, Tuple intensity) {
+        return new Light(position, intensity);
+    }
+
+    public static Tuple lighting(Material m, Light light, Tuple position, Tuple eyev, Tuple normalv) {
+        Tuple effectiveColor = m.color.mul(light.intensity);
+        Tuple lightv = normalize(light.position.sub(position));
+        Tuple ambient = effectiveColor.mul(m.ambient);
+        Tuple diffuse;
+        Tuple specular;
+
+
+        double lightDotNormal = dot(lightv, normalv);
+        if (lightDotNormal < 0) {
+            diffuse = color(0, 0, 0);
+            specular = color(0, 0, 0);
+        } else {
+            diffuse = effectiveColor.mul(m.diffuse).mul(lightDotNormal);
+            Tuple reflectv = reflect(lightv.neg(), normalv);
+            double reflectDotEye = dot(reflectv, eyev);
+
+            if (reflectDotEye <= 0) {
+                specular = color(0, 0, 0);
+            } else {
+                double factor = Math.pow(reflectDotEye, m.shininess);
+                specular = light.intensity.mul(m.specular).mul(factor);
+            }
+        }
+
+        return ambient.add(diffuse).add(specular);
+    }
+}

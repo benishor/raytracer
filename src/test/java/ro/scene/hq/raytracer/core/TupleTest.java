@@ -206,7 +206,6 @@ public class TupleTest {
 
         Tuple r = reflect(v, n);
         assertTupleEquals(r, vector(1, 0, 0));
-
     }
 
     private void assertTupleEquals(Tuple a, Tuple b) {
@@ -215,6 +214,4 @@ public class TupleTest {
         assertThat(areEqual(a.z, b.z), is(true));
         assertThat(areEqual(a.w, b.w), is(true));
     }
-
-
 }
