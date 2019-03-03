@@ -3,6 +3,7 @@ package ro.scene.hq.raytracer.core;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static ro.scene.hq.raytracer.core.Intersection.intersection;
 import static ro.scene.hq.raytracer.core.Matrix.*;
@@ -48,5 +49,21 @@ public class Sphere {
         Tuple worldNormal = transpose(inverse(s.transform)).mul(objectNormal);
         worldNormal.w = 0;
         return normalize(worldNormal);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Sphere sphere = (Sphere) o;
+        return Double.compare(sphere.radius, radius) == 0 &&
+                origin.equals(sphere.origin) &&
+                transform.equals(sphere.transform) &&
+                material.equals(sphere.material);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(radius, origin, transform, material);
     }
 }

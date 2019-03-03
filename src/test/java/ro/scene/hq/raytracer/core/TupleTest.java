@@ -175,19 +175,19 @@ public class TupleTest {
         Tuple c1 = color(0.9, 0.6, 0.75);
         Tuple c2 = color(0.7, 0.1, 0.25);
 
-        assertTupleEquals(c1.sub(c2), color(0.2, 0.5, 0.5));
+        assertEqualTuples(c1.sub(c2), color(0.2, 0.5, 0.5));
     }
 
     @Test
     public void multiplyingColorByScalar() {
         Tuple c = color(0.2, 0.3, 0.4).mul(2);
-        assertTupleEquals(c, color(0.4, 0.6, 0.8));
+        assertEqualTuples(c, color(0.4, 0.6, 0.8));
     }
 
     @Test
     public void multiplyingColors() {
         Tuple c = color(1, 0.2, 0.4).mul(color(0.9, 1, 0.1));
-        assertTupleEquals(c, color(0.9, 0.2, 0.04));
+        assertEqualTuples(c, color(0.9, 0.2, 0.04));
     }
 
     @Test
@@ -196,7 +196,7 @@ public class TupleTest {
         Tuple n = vector(0, 1, 0);
 
         Tuple r = reflect(v, n);
-        assertTupleEquals(r, vector(1, 1, 0));
+        assertEqualTuples(r, vector(1, 1, 0));
     }
 
     @Test
@@ -205,10 +205,10 @@ public class TupleTest {
         Tuple n = vector(Math.sqrt(2.0) / 2.0, Math.sqrt(2.0) / 2.0, 0);
 
         Tuple r = reflect(v, n);
-        assertTupleEquals(r, vector(1, 0, 0));
+        assertEqualTuples(r, vector(1, 0, 0));
     }
 
-    private void assertTupleEquals(Tuple a, Tuple b) {
+    private void assertEqualTuples(Tuple a, Tuple b) {
         assertThat(areEqual(a.x, b.x), is(true));
         assertThat(areEqual(a.y, b.y), is(true));
         assertThat(areEqual(a.z, b.z), is(true));

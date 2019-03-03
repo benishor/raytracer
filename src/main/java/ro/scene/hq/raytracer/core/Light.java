@@ -1,5 +1,7 @@
 package ro.scene.hq.raytracer.core;
 
+import java.util.Objects;
+
 import static ro.scene.hq.raytracer.core.Tuple.*;
 
 public class Light {
@@ -41,5 +43,19 @@ public class Light {
         }
 
         return ambient.add(diffuse).add(specular);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Light light = (Light) o;
+        return intensity.equals(light.intensity) &&
+                position.equals(light.position);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(intensity, position);
     }
 }
