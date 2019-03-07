@@ -95,6 +95,33 @@ public class WorldTest {
         assertEqualTuples(comps.normalv, vector(0, 0, -1));
     }
 
+    @Test
+    public void shadingAnIntersection() {
+        World w = default_world();
+        Ray r = ray(point(0, 0, -5), vector(0, 0, 1));
+        Sphere shape = w.objects.get(0);
+        Intersection i = intersection(4, shape);
+
+        Computations comps = prepare_computations(i, r);
+
+        Tuple c = shade_hit(w, comps);
+        assertEqualTuples(c, color(0.38066, 0.47583, 0.2855));
+    }
+
+    @Test
+    public void shadingAnIntersectionFromInside() {
+        World w = default_world();
+        w.light = point_light(point(0, 0.25, 0), color(1, 1, 1));
+        Ray r = ray(point(0, 0, 0), vector(0, 0, 1));
+        Sphere shape = w.objects.get(1);
+        Intersection i = intersection(0.5, shape);
+
+        Computations comps = prepare_computations(i, r);
+
+        Tuple c = shade_hit(w, comps);
+        assertEqualTuples(c, color(0.90498, 0.90498, 0.90498));
+    }
+
     private void assertEqualTuples(Tuple a, Tuple b) {
         assertThat(areEqual(a.x, b.x), is(true));
         assertThat(areEqual(a.y, b.y), is(true));

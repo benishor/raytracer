@@ -1,10 +1,10 @@
 package ro.scene.hq.raytracer.core;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
+import static ro.scene.hq.raytracer.core.Light.lighting;
 import static ro.scene.hq.raytracer.core.Light.point_light;
 import static ro.scene.hq.raytracer.core.Matrix.scaling;
 import static ro.scene.hq.raytracer.core.Sphere.intersect;
@@ -35,7 +35,7 @@ public class World {
 
         Sphere s1 = sphere();
         s1.material.color = color(0.8, 1.0, 0.6);
-        s1.material.diffuse= 0.7;
+        s1.material.diffuse = 0.7;
         s1.material.specular = 0.2;
         w.objects.add(s1);
 
@@ -53,5 +53,14 @@ public class World {
         }
         result.sort(Comparator.comparingDouble(a -> a.t));
         return result;
+    }
+
+    public static Tuple shade_hit(World w, Computations comps) {
+        return lighting(
+                comps.object.material,
+                w.light,
+                comps.point,
+                comps.eyev,
+                comps.normalv);
     }
 }
