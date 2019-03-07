@@ -122,6 +122,34 @@ public class WorldTest {
         assertEqualTuples(c, color(0.90498, 0.90498, 0.90498));
     }
 
+    @Test
+    public void theColorWhenARayMisses() {
+        World w = default_world();
+        Ray r = ray(point(0, 0, -5), vector(0, 1, 0));
+        Tuple c = color_at(w, r);
+        assertEqualTuples(c, color(0, 0, 0));
+    }
+
+    @Test
+    public void theColorWhenARayHits() {
+        World w = default_world();
+        Ray r = ray(point(0, 0, -5), vector(0, 0, 1));
+        Tuple c = color_at(w, r);
+        assertEqualTuples(c, color(0.38066, 0.47583, 0.2855));
+    }
+
+    @Test
+    public void theColorWithAnIntersectionBehindTheRay() {
+        World w = default_world();
+        Sphere outer = w.objects.get(0);
+        outer.material.ambient = 1;
+        Sphere inner = w.objects.get(1);
+        inner.material.ambient = 1;
+        Ray r = ray(point(0, 0, 0.75), vector(0, 0, -1));
+        Tuple c = color_at(w, r);
+        assertEqualTuples(c, inner.material.color);
+    }
+
     private void assertEqualTuples(Tuple a, Tuple b) {
         assertThat(areEqual(a.x, b.x), is(true));
         assertThat(areEqual(a.y, b.y), is(true));

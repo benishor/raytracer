@@ -2,6 +2,9 @@ package ro.scene.hq.raytracer.core;
 
 import java.util.Arrays;
 
+import static ro.scene.hq.raytracer.core.Tuple.cross;
+import static ro.scene.hq.raytracer.core.Tuple.normalize;
+
 public class Matrix {
     public final int size;
     public double[][] data; // row, column
@@ -232,4 +235,16 @@ public class Matrix {
         return result;
     }
 
+    public static Matrix view_transform(Tuple from, Tuple to, Tuple up) {
+        Tuple forward = normalize(to.sub(from));
+        Tuple left = cross(forward, normalize(up));
+        Tuple trueUp = cross(left, forward);
+        Matrix orientation = new Matrix(new double[][]{
+                {left.x, left.y, left.z, 0.0},
+                {trueUp.x, trueUp.y, trueUp.z, 0.0},
+                {-forward.x, -forward.y, -forward.z, 0.0},
+                {0, 0, 0, 1}
+        });
+        return orientation.mul(translation(-from.x, -from.y, -from.z));
+    }
 }

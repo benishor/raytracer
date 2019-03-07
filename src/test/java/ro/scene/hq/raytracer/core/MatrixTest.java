@@ -470,13 +470,6 @@ public class MatrixTest {
         assertThat(transform.mul(p), is(equalTo(point(2, 3, 7))));
     }
 
-    private void assertTupleEquals(Tuple a, Tuple b) {
-        Assert.assertThat(areEqual(a.x, b.x), CoreMatchers.is(true));
-        Assert.assertThat(areEqual(a.y, b.y), CoreMatchers.is(true));
-        Assert.assertThat(areEqual(a.z, b.z), CoreMatchers.is(true));
-        Assert.assertThat(areEqual(a.w, b.w), CoreMatchers.is(true));
-    }
-
     @Test
     public void individualTransformationsAreAppliedInSequence() {
         Tuple p = point(1, 0, 1);
@@ -511,6 +504,40 @@ public class MatrixTest {
         assertTupleEquals(p2, point(15, 0, 7));
     }
 
+    @Test
+    public void theTransformationMatrixForTheDefaultOrientation() {
+        Tuple from = point(0, 0, 0);
+        Tuple to = point(0, 0, -1);
+        Tuple up = vector(0, 1, 0);
+        Matrix t = view_transform(from, to, up);
+        assertMatricesEqual(t, identity(4));
+    }
+
+    @Test
+    public void aViewTransformationMatrixLookingInPositiveZDirection() {
+        Tuple from = point(0, 0, 0);
+        Tuple to = point(0, 0, 1);
+        Tuple up = vector(0, 1, 0);
+        Matrix t = view_transform(from, to, up);
+        assertMatricesEqual(t, scaling(-1, 1, -1));
+    }
+
+    @Test
+    public void anArbitraryViewTransformation() {
+        Tuple from = point(1, 3, 2);
+        Tuple to = point(4, -2, 8);
+        Tuple up = vector(1, 1, 0);
+        Matrix t = view_transform(from, to, up);
+
+        Matrix expected = new Matrix(new double[][]{
+                {-0.50709, 0.50709, 0.67612, -2.36643},
+                {0.76772, 0.60609, 0.12122, -2.82843},
+                {-0.35857, 0.59761, -0.71714, 0.00000},
+                {0.00000, 0.00000, 0.00000, 1.00000}
+        });
+        assertMatricesEqual(t, expected);
+    }
+
     private void assertMatricesEqual(Matrix a, Matrix b) {
         assertThat(a.size, is(equalTo(b.size)));
         for (int row = 0; row < a.size; row++) {
@@ -518,5 +545,12 @@ public class MatrixTest {
                 assertThat(areEqual(a.data[row][col], b.data[row][col]), is(true));
             }
         }
+    }
+
+    private void assertTupleEquals(Tuple a, Tuple b) {
+        Assert.assertThat(areEqual(a.x, b.x), CoreMatchers.is(true));
+        Assert.assertThat(areEqual(a.y, b.y), CoreMatchers.is(true));
+        Assert.assertThat(areEqual(a.z, b.z), CoreMatchers.is(true));
+        Assert.assertThat(areEqual(a.w, b.w), CoreMatchers.is(true));
     }
 }

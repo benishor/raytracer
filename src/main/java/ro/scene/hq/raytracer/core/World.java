@@ -3,7 +3,10 @@ package ro.scene.hq.raytracer.core;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
+import static ro.scene.hq.raytracer.core.Computations.prepare_computations;
+import static ro.scene.hq.raytracer.core.Intersection.hit;
 import static ro.scene.hq.raytracer.core.Light.lighting;
 import static ro.scene.hq.raytracer.core.Light.point_light;
 import static ro.scene.hq.raytracer.core.Matrix.scaling;
@@ -62,5 +65,16 @@ public class World {
                 comps.point,
                 comps.eyev,
                 comps.normalv);
+    }
+
+    public static Tuple color_at(World w, Ray r) {
+        List<Intersection> intersections = intersect_world(w, r);
+        Optional<Intersection> hitIntersection = hit(intersections);
+        if (hitIntersection.isPresent()) {
+            Computations comps = prepare_computations(hitIntersection.get(), r);
+            return shade_hit(w, comps);
+        } else {
+            return color(0, 0, 0);
+        }
     }
 }
