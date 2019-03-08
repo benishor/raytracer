@@ -6,10 +6,12 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static ro.scene.hq.raytracer.core.Computations.prepare_computations;
 import static ro.scene.hq.raytracer.core.Intersection.intersection;
 import static ro.scene.hq.raytracer.core.Light.point_light;
 import static ro.scene.hq.raytracer.core.Matrix.scaling;
+import static ro.scene.hq.raytracer.core.Matrix.translation;
 import static ro.scene.hq.raytracer.core.Ray.ray;
 import static ro.scene.hq.raytracer.core.Sphere.sphere;
 import static ro.scene.hq.raytracer.core.Tuple.*;
@@ -139,6 +141,34 @@ public class WorldTest {
     }
 
     @Test
+    public void noShadowWhenNothingIsCollinearWithPointAndLight() {
+        World w = default_world();
+        Tuple p = point(0, 10, 0);
+        assertThat(is_shadowed(w, p), is(false));
+    }
+
+    @Test
+    public void shadowWhenAnObjectIsBetweenThePointAndLight() {
+        World w = default_world();
+        Tuple p = point(10, -10, 10);
+        assertThat(is_shadowed(w, p), is(true));
+    }
+
+    @Test
+    public void noShadowWhenObjectIsBehindTheLight() {
+        World w = default_world();
+        Tuple p = point(-20, 20, -20);
+        assertThat(is_shadowed(w, p), is(false));
+    }
+
+    @Test
+    public void noShadowWhenObjectIsBehindThePoint() {
+        World w = default_world();
+        Tuple p = point(-2, 2, -2);
+        assertThat(is_shadowed(w, p), is(false));
+    }
+
+    @Test
     public void theColorWithAnIntersectionBehindTheRay() {
         World w = default_world();
         Sphere outer = w.objects.get(0);
@@ -148,6 +178,36 @@ public class WorldTest {
         Ray r = ray(point(0, 0, 0.75), vector(0, 0, -1));
         Tuple c = color_at(w, r);
         assertEqualTuples(c, inner.material.color);
+    }
+
+    @Test
+    public void theHitShouldOffsetThePoint() {
+        Ray r = ray(point(0, 0, -5), vector(0, 0, 1));
+        Sphere shape = sphere();
+        shape.transform = translation(0, 0, 1);
+        Intersection i = intersection(5, shape);
+        Computations comps = prepare_computations(i, r);
+        assertTrue(comps.over_point.z < -EPSILON/2.0);
+        assertTrue(comps.point.z > comps.over_point.z);
+    }
+
+    @Test
+    public void shadeHitIsGivenAnIntersectionInShadow() {
+        World w = world();
+        w.light = point_light(point(0, 0, -10), color(1, 1, 1));
+
+        Sphere s1 = sphere();
+        w.objects.add(s1);
+
+        Sphere s2 = sphere();
+        s2.transform = translation(0, 0, 10);
+        w.objects.add(s2);
+
+        Ray r = ray(point(0, 0, 5), vector(0, 0, 1));
+        Intersection i = intersection(4, s2);
+        Computations comps = prepare_computations(i, r);
+        Tuple c = shade_hit(w, comps);
+        assertEqualTuples(c, color(0.1, 0.1, 0.1));
     }
 
     private void assertEqualTuples(Tuple a, Tuple b) {

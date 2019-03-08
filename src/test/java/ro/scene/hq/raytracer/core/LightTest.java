@@ -63,7 +63,8 @@ public class LightTest {
         Tuple normalv = vector(0, 0, -1);
         Light light = point_light(point(0, 0, -10), color(1, 1, 1));
 
-        Tuple result = lighting(m, light, position, eyev, normalv);
+        boolean inShadow = false;
+        Tuple result = lighting(m, light, position, eyev, normalv, inShadow);
         assertEqualTuples(result, color(1.9, 1.9, 1.9));
     }
 
@@ -76,7 +77,8 @@ public class LightTest {
         Tuple normalv = vector(0, 0, -1);
         Light light = point_light(point(0, 0, -10), color(1, 1, 1));
 
-        Tuple result = lighting(m, light, position, eyev, normalv);
+        boolean inShadow = false;
+        Tuple result = lighting(m, light, position, eyev, normalv, inShadow);
         assertEqualTuples(result, color(1.0, 1.0, 1.0));
     }
 
@@ -89,7 +91,8 @@ public class LightTest {
         Tuple normalv = vector(0, 0, -1);
         Light light = point_light(point(0, 10, -10), color(1, 1, 1));
 
-        Tuple result = lighting(m, light, position, eyev, normalv);
+        boolean inShadow = false;
+        Tuple result = lighting(m, light, position, eyev, normalv, inShadow);
         assertEqualTuples(result, color(0.7364, 0.7364, 0.7364));
     }
 
@@ -102,7 +105,8 @@ public class LightTest {
         Tuple normalv = vector(0, 0, -1);
         Light light = point_light(point(0, 10, -10), color(1, 1, 1));
 
-        Tuple result = lighting(m, light, position, eyev, normalv);
+        boolean inShadow = false;
+        Tuple result = lighting(m, light, position, eyev, normalv, inShadow);
         assertEqualTuples(result, color(1.6364, 1.6364, 1.6364));
     }
 
@@ -115,9 +119,25 @@ public class LightTest {
         Tuple normalv = vector(0, 0, -1);
         Light light = point_light(point(0, 0, 10), color(1, 1, 1));
 
-        Tuple result = lighting(m, light, position, eyev, normalv);
+        boolean inShadow = false;
+        Tuple result = lighting(m, light, position, eyev, normalv, inShadow);
         assertEqualTuples(result, color(0.1, 0.1, 0.1));
     }
+
+    @Test
+    public void lightingWithTheSurfaceInShadow() {
+        Material m = material();
+        Tuple position = point(0, 0, 0);
+
+        Tuple eyev = vector(0, 0, -1);
+        Tuple normalv = vector(0, 0, -1);
+        Light light = point_light(point(0, 0, -10), color(1, 1, 1));
+
+        boolean inShadow = true;
+        Tuple result = lighting(m, light, position, eyev, normalv, inShadow);
+        assertEqualTuples(result, color(0.1, 0.1, 0.1));
+    }
+
 
     private void assertEqualMaterials(Material a, Material b) {
         assertEqualTuples(a.color, b.color);

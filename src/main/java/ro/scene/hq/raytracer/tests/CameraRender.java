@@ -29,7 +29,7 @@ public class CameraRender {
         floor.transform = scaling(10, 0.01, 10);
         floor.material = material();
         floor.material.color = color(1, 0.9, 0.9);
-        floor.material.specular = 0;
+        floor.material.specular = 0.5;
 
         Sphere left_wall = sphere();
         left_wall.transform = translation(0, 0, 5)
@@ -67,13 +67,17 @@ public class CameraRender {
         left.material.specular = 0.3;
 
         World w = world();
+//        w.objects.addAll(Arrays.asList(floor, left_wall, right_wall, middle));
         w.objects.addAll(Arrays.asList(floor, left_wall, right_wall, middle, right, left));
         w.light = point_light(point(-10, 10, -10), color(1, 1, 1));
+//        w.light = point_light(point(0, 5, 0), color(1, 1, 1));
 
         Camera c = camera(1024, 768, Math.PI / 3.0);
         c.transform = view_transform(point(0, 1.5, -5), point(0, 1, 0), vector(0, 1, 0));
 
+        long startTime = System.currentTimeMillis();
         Canvas canvas = render(c, w);
+        System.out.println("Render took " + (System.currentTimeMillis() - startTime) + " ms");
 
         List<String> ppm = canvas.toPPM();
         OutputStream out = new BufferedOutputStream(new FileOutputStream("camera.ppm"));

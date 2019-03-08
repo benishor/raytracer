@@ -10,10 +10,10 @@ import static ro.scene.hq.raytracer.core.Intersection.hit;
 import static ro.scene.hq.raytracer.core.Light.lighting;
 import static ro.scene.hq.raytracer.core.Light.point_light;
 import static ro.scene.hq.raytracer.core.Matrix.scaling;
+import static ro.scene.hq.raytracer.core.Ray.ray;
 import static ro.scene.hq.raytracer.core.Sphere.intersect;
 import static ro.scene.hq.raytracer.core.Sphere.sphere;
-import static ro.scene.hq.raytracer.core.Tuple.color;
-import static ro.scene.hq.raytracer.core.Tuple.point;
+import static ro.scene.hq.raytracer.core.Tuple.*;
 
 public class World {
     public List<Sphere> objects = new LinkedList<>();
@@ -59,12 +59,14 @@ public class World {
     }
 
     public static Tuple shade_hit(World w, Computations comps) {
+        boolean inShadow = is_shadowed(w, comps.over_point);
         return lighting(
                 comps.object.material,
                 w.light,
-                comps.point,
+                comps.over_point,
                 comps.eyev,
-                comps.normalv);
+                comps.normalv,
+                inShadow);
     }
 
     public static Tuple color_at(World w, Ray r) {
@@ -76,5 +78,17 @@ public class World {
         } else {
             return color(0, 0, 0);
         }
+    }
+
+    public static boolean is_shadowed(World w, Tuple point) {
+        Tuple v = w.light.position.sub(point);
+        double distance = mag(v);
+        Tuple direction = normalize(v);
+
+        Ray r = ray(point, direction);
+        List<Intersection> intersections = intersect_world(w, r);
+
+        Optional<Intersection> h = hit(intersections);
+        return h.isPresent() && h.get().t < distance;
     }
 }

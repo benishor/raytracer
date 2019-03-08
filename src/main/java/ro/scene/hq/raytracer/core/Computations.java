@@ -1,12 +1,14 @@
 package ro.scene.hq.raytracer.core;
 
 import static ro.scene.hq.raytracer.core.Sphere.normal_at;
+import static ro.scene.hq.raytracer.core.Tuple.EPSILON;
 import static ro.scene.hq.raytracer.core.Tuple.dot;
 
 public class Computations {
     public double t;
     public Sphere object;
     public Tuple point;
+    public Tuple over_point;
     public Tuple eyev;
     public Tuple normalv;
     public boolean inside;
@@ -25,6 +27,8 @@ public class Computations {
         } else {
             comps.inside = false;
         }
+
+        comps.over_point = comps.point.add(comps.normalv.mul(EPSILON));
 
         return comps;
     }

@@ -17,10 +17,15 @@ public class Light {
         return new Light(position, intensity);
     }
 
-    public static Tuple lighting(Material m, Light light, Tuple position, Tuple eyev, Tuple normalv) {
+    public static Tuple lighting(Material m, Light light, Tuple position, Tuple eyev, Tuple normalv, boolean inShadow) {
         Tuple effectiveColor = m.color.mul(light.intensity);
         Tuple lightv = normalize(light.position.sub(position));
         Tuple ambient = effectiveColor.mul(m.ambient);
+        if (inShadow) {
+            return ambient;
+        }
+
+
         Tuple diffuse;
         Tuple specular;
 

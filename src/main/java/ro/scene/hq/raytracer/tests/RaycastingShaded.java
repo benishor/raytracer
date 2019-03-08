@@ -57,7 +57,8 @@ public class RaycastingShaded {
                         Tuple hitNormal = normal_at(h.get().object, hitPosition);
                         Tuple eye = r.direction.neg();
 
-                        Tuple color = lighting(h.get().object.material, light, hitPosition, eye, hitNormal);
+                        boolean inShadow = false;
+                        Tuple color = lighting(h.get().object.material, light, hitPosition, eye, hitNormal, inShadow);
 
                         c.writePixel(x, y, color);
                     }

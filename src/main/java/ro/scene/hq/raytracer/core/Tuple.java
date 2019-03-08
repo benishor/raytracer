@@ -3,7 +3,7 @@ package ro.scene.hq.raytracer.core;
 import java.util.Objects;
 
 public class Tuple {
-    private static final double EPSILON = 0.0001;
+    public static final double EPSILON = 0.0001;
     public double x;
     public double y;
     public double z;
