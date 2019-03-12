@@ -6,7 +6,7 @@ import static ro.scene.hq.raytracer.core.Tuple.dot;
 
 public class Computations {
     public double t;
-    public Sphere object;
+    public Shape object;
     public Tuple point;
     public Tuple over_point;
     public Tuple eyev;

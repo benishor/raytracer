@@ -190,7 +190,6 @@ public class SpheresTest {
         Shape.set_transform(s, translation(0, 1, 0));
 
         Tuple n = normal_at(s, point(0, 1.70711, -0.70711));
-
         assertTupleEquals(n, vector(0, 0.70711, -0.70711));
     }
 
@@ -200,7 +199,6 @@ public class SpheresTest {
         Shape.set_transform(s, scaling(1, 0.5, 1).mul(rotation_z(Math.PI / 5.0)));
 
         Tuple n = normal_at(s, point(0, Math.sqrt(2.0) / 2.0, -Math.sqrt(2.0) / 2.0));
-
         assertTupleEquals(n, vector(0, 0.97014, -0.24254));
     }
 

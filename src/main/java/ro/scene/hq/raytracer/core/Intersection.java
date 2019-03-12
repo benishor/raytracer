@@ -7,14 +7,14 @@ import java.util.Optional;
 
 public class Intersection {
     public final double t;
-    public final Sphere object;
+    public final Shape object;
 
-    public Intersection(double t, Sphere object) {
+    public Intersection(double t, Shape object) {
         this.t = t;
         this.object = object;
     }
 
-    public static Intersection intersection(double t, Sphere object) {
+    public static Intersection intersection(double t, Shape object) {
         return new Intersection(t, object);
     }
 

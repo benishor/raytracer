@@ -16,20 +16,15 @@ import static ro.scene.hq.raytracer.core.Sphere.sphere;
 import static ro.scene.hq.raytracer.core.Tuple.*;
 
 public class World {
-    public List<Sphere> objects = new LinkedList<>();
+    public List<Shape> objects = new LinkedList<>();
     public Light light;
 
     public static World world() {
         return new World();
     }
 
-    public boolean contains(Sphere s) {
-        for (Sphere o : objects) {
-            if (s.equals(o)) {
-                return true;
-            }
-        }
-        return false;
+    public boolean contains(Shape s) {
+        return objects.contains(s);
     }
 
     public static World default_world() {
@@ -51,7 +46,7 @@ public class World {
 
     public static List<Intersection> intersect_world(World w, Ray r) {
         List<Intersection> result = new LinkedList<>();
-        for (Sphere o : w.objects) {
+        for (Shape o : w.objects) {
             result.addAll(intersect(o, r));
         }
         result.sort(Comparator.comparingDouble(a -> a.t));

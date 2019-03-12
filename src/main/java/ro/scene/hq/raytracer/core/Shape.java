@@ -1,6 +1,7 @@
 package ro.scene.hq.raytracer.core;
 
 import java.util.List;
+import java.util.Objects;
 
 import static ro.scene.hq.raytracer.core.Matrix.*;
 import static ro.scene.hq.raytracer.core.Ray.transform;
@@ -31,5 +32,17 @@ public abstract class Shape {
         return normalize(worldNormal);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Shape)) return false;
+        Shape shape = (Shape) o;
+        return transform.equals(shape.transform) &&
+                material.equals(shape.material);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(transform, material);
+    }
 }

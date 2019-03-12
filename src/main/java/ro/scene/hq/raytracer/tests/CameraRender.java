@@ -1,9 +1,6 @@
 package ro.scene.hq.raytracer.tests;
 
-import ro.scene.hq.raytracer.core.Camera;
-import ro.scene.hq.raytracer.core.Canvas;
-import ro.scene.hq.raytracer.core.Sphere;
-import ro.scene.hq.raytracer.core.World;
+import ro.scene.hq.raytracer.core.*;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
@@ -18,6 +15,7 @@ import static ro.scene.hq.raytracer.core.Camera.render;
 import static ro.scene.hq.raytracer.core.Light.point_light;
 import static ro.scene.hq.raytracer.core.Material.material;
 import static ro.scene.hq.raytracer.core.Matrix.*;
+import static ro.scene.hq.raytracer.core.Plane.plane;
 import static ro.scene.hq.raytracer.core.Sphere.sphere;
 import static ro.scene.hq.raytracer.core.Tuple.*;
 import static ro.scene.hq.raytracer.core.World.world;
@@ -25,25 +23,30 @@ import static ro.scene.hq.raytracer.core.World.world;
 public class CameraRender {
     public static void main(String[] args) throws IOException {
 
-        Sphere floor = sphere();
-        floor.transform = scaling(10, 0.01, 10);
+        Plane floor = plane();
         floor.material = material();
         floor.material.color = color(1, 0.9, 0.9);
         floor.material.specular = 0.5;
 
-        Sphere left_wall = sphere();
-        left_wall.transform = translation(0, 0, 5)
-                .mul(rotation_y(-Math.PI / 4.0))
-                .mul(rotation_x(Math.PI / 2.0))
-                .mul(scaling(10, 0.01, 10));
-        left_wall.material = floor.material;
+        Plane back = plane();
+        back.transform = translation(0, 0, 10).mul(rotation_x(Math.PI/2.0));
+        back.material = material();
+        back.material.color = color(1, 0.9, 0.9);
+        back.material.specular = 0.5;
 
-        Sphere right_wall = sphere();
-        right_wall.transform = translation(0, 0, 5)
-                .mul(rotation_y(Math.PI / 4.0))
-                .mul(rotation_x(Math.PI / 2.0))
-                .mul(scaling(10, 0.01, 10));
-        right_wall.material = floor.material;
+//        Sphere left_wall = sphere();
+//        left_wall.transform = translation(0, 0, 5)
+//                .mul(rotation_y(-Math.PI / 4.0))
+//                .mul(rotation_x(Math.PI / 2.0))
+//                .mul(scaling(10, 0.01, 10));
+//        left_wall.material = floor.material;
+//
+//        Sphere right_wall = sphere();
+//        right_wall.transform = translation(0, 0, 5)
+//                .mul(rotation_y(Math.PI / 4.0))
+//                .mul(rotation_x(Math.PI / 2.0))
+//                .mul(scaling(10, 0.01, 10));
+//        right_wall.material = floor.material;
 
         Sphere middle = sphere();
         middle.transform = translation(-0.5, 1, 0.5);
@@ -68,7 +71,7 @@ public class CameraRender {
 
         World w = world();
 //        w.objects.addAll(Arrays.asList(floor, left_wall, right_wall, middle));
-        w.objects.addAll(Arrays.asList(floor, left_wall, right_wall, middle, right, left));
+        w.objects.addAll(Arrays.asList(floor, back, middle, right, left));
         w.light = point_light(point(-10, 10, -10), color(1, 1, 1));
 //        w.light = point_light(point(0, 5, 0), color(1, 1, 1));
 
@@ -80,7 +83,7 @@ public class CameraRender {
         System.out.println("Render took " + (System.currentTimeMillis() - startTime) + " ms");
 
         List<String> ppm = canvas.toPPM();
-        OutputStream out = new BufferedOutputStream(new FileOutputStream("camera.ppm"));
+        OutputStream out = new BufferedOutputStream(new FileOutputStream("camera-plane.ppm"));
         for (String line : ppm) {
             out.write(line.getBytes(StandardCharsets.ISO_8859_1));
             out.write('\n');

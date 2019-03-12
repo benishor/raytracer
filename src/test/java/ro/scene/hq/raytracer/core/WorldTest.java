@@ -1,5 +1,6 @@
 package ro.scene.hq.raytracer.core;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
@@ -19,6 +20,12 @@ import static ro.scene.hq.raytracer.core.World.*;
 
 
 public class WorldTest {
+
+//    @Before
+//    public void setUp() throws Exception {
+//        Shape.NEXT_ID = 1L;
+//    }
+
     @Test
     public void creatingAWorld() {
         World w = world();
@@ -101,7 +108,7 @@ public class WorldTest {
     public void shadingAnIntersection() {
         World w = default_world();
         Ray r = ray(point(0, 0, -5), vector(0, 0, 1));
-        Sphere shape = w.objects.get(0);
+        Shape shape = w.objects.get(0);
         Intersection i = intersection(4, shape);
 
         Computations comps = prepare_computations(i, r);
@@ -115,7 +122,7 @@ public class WorldTest {
         World w = default_world();
         w.light = point_light(point(0, 0.25, 0), color(1, 1, 1));
         Ray r = ray(point(0, 0, 0), vector(0, 0, 1));
-        Sphere shape = w.objects.get(1);
+        Shape shape = w.objects.get(1);
         Intersection i = intersection(0.5, shape);
 
         Computations comps = prepare_computations(i, r);
@@ -171,9 +178,9 @@ public class WorldTest {
     @Test
     public void theColorWithAnIntersectionBehindTheRay() {
         World w = default_world();
-        Sphere outer = w.objects.get(0);
+        Shape outer = w.objects.get(0);
         outer.material.ambient = 1;
-        Sphere inner = w.objects.get(1);
+        Shape inner = w.objects.get(1);
         inner.material.ambient = 1;
         Ray r = ray(point(0, 0, 0.75), vector(0, 0, -1));
         Tuple c = color_at(w, r);
