@@ -70,7 +70,7 @@ public class RayTest {
         Ray r = ray(point(0, 0, -5), vector(0, 0, 1));
         Sphere s = sphere();
 
-        set_transform(s, scaling(2, 2, 2));
+        Shape.set_transform(s, scaling(2, 2, 2));
         List<Intersection> xs = intersect(s, r);
 
         assertThat(xs.size(), is(2));
@@ -83,7 +83,7 @@ public class RayTest {
         Ray r = ray(point(0, 0, -5), vector(0, 0, 1));
         Sphere s = sphere();
 
-        set_transform(s, translation(5, 0, 0));
+        Shape.set_transform(s, translation(5, 0, 0));
         List<Intersection> xs = intersect(s, r);
 
         assertThat(xs.isEmpty(), is(true));

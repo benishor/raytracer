@@ -38,23 +38,6 @@ public class LightTest {
     }
 
     @Test
-    public void aSpehereHasADefaultMaterial() {
-        Sphere s = sphere();
-        assertEqualMaterials(s.material, material());
-    }
-
-    @Test
-    public void aSphereMayBeAssignedAMaterial() {
-        Sphere s = sphere();
-        Material m = material();
-        m.ambient = 1;
-
-        s.material = m;
-
-        assertEqualMaterials(s.material, m);
-    }
-
-    @Test
     public void lightingWithTheEyeBetweenTheLightAndTheSurface() {
         Material m = material();
         Tuple position = point(0, 0, 0);
