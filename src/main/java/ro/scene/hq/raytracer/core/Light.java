@@ -18,13 +18,13 @@ public class Light {
     }
 
     public static Tuple lighting(Material m, Light light, Tuple position, Tuple eyev, Tuple normalv, boolean inShadow) {
-        Tuple effectiveColor = m.color.mul(light.intensity);
+        Tuple color = m.pattern == null ? m.color : m.pattern.at(position);
+        Tuple effectiveColor = color.mul(light.intensity);
         Tuple lightv = normalize(light.position.sub(position));
         Tuple ambient = effectiveColor.mul(m.ambient);
         if (inShadow) {
             return ambient;
         }
-
 
         Tuple diffuse;
         Tuple specular;

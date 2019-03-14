@@ -4,6 +4,7 @@ import java.util.Objects;
 
 public class Material {
 
+    public Pattern pattern;
     public Tuple color = Tuple.color(1, 1, 1);
     public double ambient = 0.1;
     public double diffuse = 0.9;

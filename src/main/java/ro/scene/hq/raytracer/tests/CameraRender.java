@@ -15,6 +15,7 @@ import static ro.scene.hq.raytracer.core.Camera.render;
 import static ro.scene.hq.raytracer.core.Light.point_light;
 import static ro.scene.hq.raytracer.core.Material.material;
 import static ro.scene.hq.raytracer.core.Matrix.*;
+import static ro.scene.hq.raytracer.core.Pattern.stripe_pattern;
 import static ro.scene.hq.raytracer.core.Plane.plane;
 import static ro.scene.hq.raytracer.core.Sphere.sphere;
 import static ro.scene.hq.raytracer.core.Tuple.*;
@@ -24,13 +25,13 @@ public class CameraRender {
     public static void main(String[] args) throws IOException {
 
         Plane floor = plane();
-        floor.material = material();
+        floor.material.pattern = stripe_pattern(color(1, 0, 0), color(0.8, 0.8, 0.8));
         floor.material.color = color(1, 0.9, 0.9);
         floor.material.specular = 0.5;
 
         Plane back = plane();
         back.transform = translation(0, 0, 10).mul(rotation_x(Math.PI/2.0));
-        back.material = material();
+        back.material.pattern = stripe_pattern(color(1, 0, 0), color(0.8, 0.8, 0.8));
         back.material.color = color(1, 0.9, 0.9);
         back.material.specular = 0.5;
 
@@ -51,6 +52,7 @@ public class CameraRender {
         Sphere middle = sphere();
         middle.transform = translation(-0.5, 1, 0.5);
         middle.material = material();
+        middle.material.pattern = stripe_pattern(color(1, 0, 0), color(0.8, 0.8, 0.8));
         middle.material.color = color(0.1, 1, 0.5);
         middle.material.diffuse = 0.7;
         middle.material.specular = 0.3;
