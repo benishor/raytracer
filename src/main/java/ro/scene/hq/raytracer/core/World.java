@@ -57,6 +57,7 @@ public class World {
         boolean inShadow = is_shadowed(w, comps.over_point);
         return lighting(
                 comps.object.material,
+                comps.object,
                 w.light,
                 comps.over_point,
                 comps.eyev,

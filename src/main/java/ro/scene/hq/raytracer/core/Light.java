@@ -2,6 +2,7 @@ package ro.scene.hq.raytracer.core;
 
 import java.util.Objects;
 
+import static ro.scene.hq.raytracer.core.Pattern.stripe_at_object;
 import static ro.scene.hq.raytracer.core.Tuple.*;
 
 public class Light {
@@ -17,8 +18,8 @@ public class Light {
         return new Light(position, intensity);
     }
 
-    public static Tuple lighting(Material m, Light light, Tuple position, Tuple eyev, Tuple normalv, boolean inShadow) {
-        Tuple color = m.pattern == null ? m.color : m.pattern.at(position);
+    public static Tuple lighting(Material m, Shape object, Light light, Tuple position, Tuple eyev, Tuple normalv, boolean inShadow) {
+        Tuple color = m.pattern == null ? m.color : stripe_at_object(m.pattern, object, position);
         Tuple effectiveColor = color.mul(light.intensity);
         Tuple lightv = normalize(light.position.sub(position));
         Tuple ambient = effectiveColor.mul(m.ambient);
