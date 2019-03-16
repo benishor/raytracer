@@ -50,13 +50,16 @@ public class CameraRender {
         top.transform = translation(0, 10, 0);
 
         Sphere middle = glass_sphere();
-        middle.material.color = color(0.1, 0.1, 0.1);
+        middle.material.color = color(0.2, 0, 0);
 //        middle.material.diffuse = 0.3;
 //        middle.material.specular = 0.2;
 //        middle.material.shininess = 1;
 //        middle.material.reflective = 0.0;
         middle.material.refractiveIndex = 1.5;
-        middle.material.transparency = 0.8;
+        middle.material.transparency = 0.9;
+        middle.material.reflective = 0.9;
+        middle.material.specular = 1;
+        middle.material.shininess = 300;
         middle.transform = translation(0, 1.5, 0).mul(scaling(1.5, 1.5, 1.5));
 
         World w = world();

@@ -62,7 +62,14 @@ public class World {
                 inShadow);
         Tuple reflectedColor = reflected_color(w, comps, remaining);
         Tuple refractedColor = refracted_color(w, comps, remaining);
-        return surface.add(reflectedColor).add(refractedColor);
+
+        Material material = comps.object.material;
+        if (material.reflective > 0 && material.transparency> 0) {
+            double reflectance = schlick(comps);
+            return surface.add(reflectedColor.mul(reflectance)).add(refractedColor.mul(1.0 - reflectance));
+        } else {
+            return surface.add(reflectedColor).add(refractedColor);
+        }
     }
 
     public static Tuple color_at(World w, Ray r, int remaining) {
@@ -120,6 +127,26 @@ public class World {
         // Find the color of the refracted ray, making sure to multiply
         // by the transparency value to account for any opacity
         return color_at(w, refractedRay, remaining - 1).mul(comps.object.material.transparency);
+    }
+
+    public static double schlick(Computations comps) {
+        // find the cosine of the angle between the eye and normal vectors
+        double cos = dot(comps.eyev, comps.normalv);
+        // total internal reflection can only occur if n1 > n2
+        if (comps.n1 > comps.n2) {
+            double n = comps.n1 / comps.n2;
+            double sin2_t = n * n * (1.0 - cos * cos);
+            if (sin2_t > 1.0) {
+                return 1.0;
+            }
+            // compute cosine of theta_t using trig identity
+            double cos_t = Math.sqrt(1.0 - sin2_t);
+            // when n1 > n2, use cos(theta_t) instead
+            cos = cos_t;
+        }
+
+        double r0 = Math.pow(((comps.n1 - comps.n2) / (comps.n1 + comps.n2)), 2.0);
+        return r0 + (1 - r0) * Math.pow((1 - cos), 5);
     }
 
     public static boolean is_shadowed(World w, Tuple point) {

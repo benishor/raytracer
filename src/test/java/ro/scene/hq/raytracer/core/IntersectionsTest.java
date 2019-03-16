@@ -23,6 +23,7 @@ import static ro.scene.hq.raytracer.core.Sphere.glass_sphere;
 import static ro.scene.hq.raytracer.core.Sphere.sphere;
 import static ro.scene.hq.raytracer.core.StripePattern.stripe_pattern;
 import static ro.scene.hq.raytracer.core.Tuple.*;
+import static ro.scene.hq.raytracer.core.World.schlick;
 
 public class IntersectionsTest {
     @Test
@@ -91,6 +92,47 @@ public class IntersectionsTest {
 
         assertTrue(comps.under_point.z > EPSILON/2.0);
         assertTrue(comps.point.z < comps.under_point.z);
+    }
+
+    @Test
+    public void schlickApproximationUnderTotalInternalReflection() {
+        Shape shape = glass_sphere();
+        Ray r = ray(point(0, 0, Math.sqrt(2.0)/2.0), vector(0, 1, 0));
+        List<Intersection> xs = intersections(
+                intersection(-Math.sqrt(2.0)/2.0, shape),
+                intersection(Math.sqrt(2.0)/2.0, shape)
+        );
+        Computations comps = prepare_computations(xs.get(1), r, xs);
+        double reflectance = schlick(comps);
+
+        assertThat(reflectance, is(equalTo(1.0)));
+    }
+
+    @Test
+    public void schlickApproximationWithAPerpendicularViewingAngle() {
+        Shape shape = glass_sphere();
+        Ray r = ray(point(0, 0, 0), vector(0, 1, 0));
+        List<Intersection> xs = intersections(
+                intersection(-1, shape),
+                intersection(1, shape)
+        );
+
+        Computations comps = prepare_computations(xs.get(1), r, xs);
+        double reflectance = schlick(comps);
+
+        assertTrue(areEqual(reflectance, 0.04));
+    }
+
+    @Test
+    public void schlickApproximationWithSmallAngleAndN2LargerThanN1() {
+        Shape shape = glass_sphere();
+        Ray r = ray(point(0, 0.99, -2), vector(0, 0, 1));
+        List<Intersection> xs = intersections(intersection(1.8589, shape));
+
+        Computations comps = prepare_computations(xs.get(0), r, xs);
+        double reflectance = schlick(comps);
+
+        assertTrue(areEqual(reflectance, 0.48873));
     }
 
     private void assertEqualTuples(Tuple a, Tuple b) {

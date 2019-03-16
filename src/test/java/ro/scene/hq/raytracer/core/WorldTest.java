@@ -394,6 +394,31 @@ public class WorldTest {
         assertEqualTuples(color, color(0.93642, 0.68642, 0.68642));
     }
 
+    @Test
+    public void shadeHitWithAReflectiveTransparentMaterial() {
+        World w = default_world();
+        Ray r = ray(point(0, 0, -3), vector(0, -Math.sqrt(2.0) / 2.0, Math.sqrt(2.0) / 2.0));
+
+        Plane floor = plane();
+        floor.transform = translation(0, -1, 0);
+        floor.material.reflective = 0.5;
+        floor.material.transparency = 0.5;
+        floor.material.refractiveIndex = 1.5;
+        w.objects.add(floor);
+
+        Sphere ball = sphere();
+        ball.material.color = color(1, 0, 0);
+        ball.material.ambient = 0.5;
+        ball.transform = translation(0, -3.5, -0.5);
+        w.objects.add(ball);
+
+        List<Intersection> xs = intersections(intersection(Math.sqrt(2.0), floor));
+        Computations comps = prepare_computations(xs.get(0), r, xs);
+
+        Tuple color = shade_hit(w, comps, 5);
+        assertEqualTuples(color, color(0.93391, 0.69643, 0.69243));
+    }
+
     private void assertEqualTuples(Tuple a, Tuple b) {
         assertThat(areEqual(a.x, b.x), is(true));
         assertThat(areEqual(a.y, b.y), is(true));
