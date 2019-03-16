@@ -12,10 +12,13 @@ import java.util.List;
 
 import static ro.scene.hq.raytracer.core.Camera.camera;
 import static ro.scene.hq.raytracer.core.Camera.render;
+import static ro.scene.hq.raytracer.core.CheckersPattern.checkers_pattern;
+import static ro.scene.hq.raytracer.core.GradientPattern.gradient_pattern;
 import static ro.scene.hq.raytracer.core.Light.point_light;
 import static ro.scene.hq.raytracer.core.Material.material;
 import static ro.scene.hq.raytracer.core.Matrix.*;
 import static ro.scene.hq.raytracer.core.Plane.plane;
+import static ro.scene.hq.raytracer.core.RingPattern.ring_pattern;
 import static ro.scene.hq.raytracer.core.Sphere.sphere;
 import static ro.scene.hq.raytracer.core.StripePattern.stripe_pattern;
 import static ro.scene.hq.raytracer.core.Tuple.*;
@@ -25,14 +28,15 @@ public class CameraRender {
     public static void main(String[] args) throws IOException {
 
         Plane floor = plane();
-        floor.material.pattern = stripe_pattern(color(1, 0, 0), color(0.8, 0.8, 0.8));
+        floor.material.pattern = ring_pattern(color(1, 0, 0), color(0.8, 0.8, 0.8));
+        floor.material.pattern.transform = translation(0, 0, 0.5).mul(scaling(0.3, 0.3, 0.3));
         floor.material.color = color(1, 0.9, 0.9);
         floor.material.specular = 0.5;
 
         Plane back = plane();
         back.transform = translation(0, 0, 10).mul(rotation_x(Math.PI/2.0));
         back.material.pattern = stripe_pattern(color(1, 0, 0), color(0.8, 0.8, 0.8));
-        back.material.pattern.transform = scaling(0.3, 0.3, 0.3).mul(rotation_y(Math.PI / 6.0));
+        back.material.pattern.transform = scaling(0.3, 0.3, 0.3);
         back.material.color = color(1, 0.9, 0.9);
         back.material.specular = 0.5;
 
@@ -53,7 +57,8 @@ public class CameraRender {
         Sphere middle = sphere();
         middle.transform = translation(-0.5, 1, 0.5);
         middle.material = material();
-        middle.material.pattern = stripe_pattern(color(1, 0, 0), color(0.8, 0.8, 0.8));
+        middle.material.pattern = checkers_pattern(color(1, 0, 0), color(0.8, 0.8, 0.8));
+        middle.material.pattern.transform = scaling(0.3, 0.3, 0.3);
         middle.material.color = color(0.1, 1, 0.5);
         middle.material.diffuse = 0.7;
         middle.material.specular = 0.3;
@@ -61,6 +66,8 @@ public class CameraRender {
         Sphere right = sphere();
         right.transform = translation(1.5, 0.5, -0.5).mul(scaling(0.5, 0.5, 0.5));
         right.material = material();
+        right.material.pattern = gradient_pattern(color(1, 0, 0), color(0.2, 1, 0.4));
+        right.material.pattern.transform = rotation_z(Math.PI/6.0);
         right.material.color = color(0.5, 1, 0.1);
         right.material.diffuse = 0.7;
         right.material.specular = 0.3;

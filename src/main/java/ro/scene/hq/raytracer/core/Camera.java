@@ -1,5 +1,7 @@
 package ro.scene.hq.raytracer.core;
 
+import java.util.stream.IntStream;
+
 import static ro.scene.hq.raytracer.core.Canvas.canvas;
 import static ro.scene.hq.raytracer.core.Matrix.inverse;
 import static ro.scene.hq.raytracer.core.Ray.ray;
@@ -61,11 +63,17 @@ public class Camera {
     public static Canvas render(Camera c, World w) {
         Canvas image = canvas(c.hsize, c.vsize);
         for (int y = 0; y < c.vsize; y++) {
-            for (int x = 0; x < c.hsize; x++) {
-                Ray ray = ray_for_pixel(c, x, y);
+            final int yy = y;
+            IntStream.range(0, c.hsize).parallel().forEach(x -> {
+                Ray ray = ray_for_pixel(c, x, yy);
                 Tuple color = color_at(w, ray);
-                image.writePixel(x, y, color);
-            }
+                image.writePixel(x, yy, color);
+            });
+//            for (int x = 0; x < c.hsize; x++) {
+//                Ray ray = ray_for_pixel(c, x, y);
+//                Tuple color = color_at(w, ray);
+//                image.writePixel(x, y, color);
+//            }
         }
         return image;
     }

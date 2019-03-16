@@ -5,9 +5,12 @@ import org.junit.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static ro.scene.hq.raytracer.core.CheckersPattern.checkers_pattern;
+import static ro.scene.hq.raytracer.core.GradientPattern.gradient_pattern;
 import static ro.scene.hq.raytracer.core.Matrix.*;
 import static ro.scene.hq.raytracer.core.Pattern.*;
 import static ro.scene.hq.raytracer.core.PatternsTest.TestPattern.test_pattern;
+import static ro.scene.hq.raytracer.core.RingPattern.ring_pattern;
 import static ro.scene.hq.raytracer.core.Shape.set_transform;
 import static ro.scene.hq.raytracer.core.Sphere.sphere;
 import static ro.scene.hq.raytracer.core.StripePattern.stripe_pattern;
@@ -114,6 +117,49 @@ public class PatternsTest {
         pattern.transform = translation(0.5, 1, 1.5);
         Tuple c = pattern.colorAtObject(shape, point(2.5, 3, 3.5));
         assertEqualTuples(c, color(0.75, 0.5, 0.25));
+    }
+
+    @Test
+    public void aGradientLinearlyInterpolatesBetweenColors() {
+        Pattern pattern = gradient_pattern(white, black);
+        assertEqualTuples(pattern.colorAt(point(0, 0, 0)), white);
+        assertEqualTuples(pattern.colorAt(point(0.25, 0, 0)), color(0.75, 0.75, 0.75));
+        assertEqualTuples(pattern.colorAt(point(0.5, 0, 0)), color(0.5, 0.5, 0.5));
+        assertEqualTuples(pattern.colorAt(point(0.75, 0, 0)), color(0.25, 0.25, 0.25));
+    }
+
+    @Test
+    public void aRingShouldExtendInBothXAndZ() {
+        Pattern pattern = ring_pattern(white, black);
+        assertEqualTuples(pattern.colorAt(point(0, 0, 0)), white);
+        assertEqualTuples(pattern.colorAt(point(1, 0, 0)), black);
+        assertEqualTuples(pattern.colorAt(point(0, 0, 1)), black);
+        // 0.708 = just slightly more than √ 2/2
+        assertEqualTuples(pattern.colorAt(point(0.708, 0, 0.708)), black);
+    }
+
+    @Test
+    public void checkersShouldRepeatInX() {
+        Pattern pattern = checkers_pattern(white, black);
+        assertEqualTuples(pattern.colorAt(point(0, 0, 0)), white);
+        assertEqualTuples(pattern.colorAt(point(0.99, 0, 0)), white);
+        assertEqualTuples(pattern.colorAt(point(1.01, 0, 0)), black);
+    }
+
+    @Test
+    public void checkersShouldRepeatInY() {
+        Pattern pattern = checkers_pattern(white, black);
+        assertEqualTuples(pattern.colorAt(point(0, 0, 0)), white);
+        assertEqualTuples(pattern.colorAt(point(0, 0.99, 0)), white);
+        assertEqualTuples(pattern.colorAt(point(0, 1.01, 0)), black);
+    }
+
+    @Test
+    public void checkersShouldRepeatInZ() {
+        Pattern pattern = checkers_pattern(white, black);
+        assertEqualTuples(pattern.colorAt(point(0, 0, 0)), white);
+        assertEqualTuples(pattern.colorAt(point(0, 0, 0.99)), white);
+        assertEqualTuples(pattern.colorAt(point(0, 0, 1.01)), black);
     }
 
     private void assertEqualTuples(Tuple a, Tuple b) {
