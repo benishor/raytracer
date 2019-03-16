@@ -1,7 +1,5 @@
 package ro.scene.hq.raytracer.core;
 
-import static java.lang.Math.floor;
-
 public class RingPattern extends Pattern {
     public final Tuple a;
     public final Tuple b;
@@ -13,8 +11,8 @@ public class RingPattern extends Pattern {
 
     @Override
     Tuple colorAt(Tuple point) {
-        double distance = Math.sqrt(point.x*point.x + point.z+point.z);
-        if (((long)Math.floor(distance) % 2) == 0) {
+        double distance = Math.sqrt(point.x * point.x + point.z * point.z);
+        if (((long) Math.floor(distance) % 2) == 0) {
             return a;
         } else {
             return b;

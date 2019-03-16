@@ -36,7 +36,7 @@ public class CameraRender {
         Plane back = plane();
         back.transform = translation(0, 0, 10).mul(rotation_x(Math.PI/2.0));
         back.material.pattern = stripe_pattern(color(1, 0, 0), color(0.8, 0.8, 0.8));
-        back.material.pattern.transform = scaling(0.3, 0.3, 0.3);
+        back.material.pattern.transform = scaling(0.3, 0.3, 0.3).mul(rotation_y(Math.PI/7.0));
         back.material.color = color(1, 0.9, 0.9);
         back.material.specular = 0.5;
 
