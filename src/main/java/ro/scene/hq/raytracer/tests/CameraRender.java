@@ -15,9 +15,9 @@ import static ro.scene.hq.raytracer.core.Camera.render;
 import static ro.scene.hq.raytracer.core.Light.point_light;
 import static ro.scene.hq.raytracer.core.Material.material;
 import static ro.scene.hq.raytracer.core.Matrix.*;
-import static ro.scene.hq.raytracer.core.Pattern.stripe_pattern;
 import static ro.scene.hq.raytracer.core.Plane.plane;
 import static ro.scene.hq.raytracer.core.Sphere.sphere;
+import static ro.scene.hq.raytracer.core.StripePattern.stripe_pattern;
 import static ro.scene.hq.raytracer.core.Tuple.*;
 import static ro.scene.hq.raytracer.core.World.world;
 

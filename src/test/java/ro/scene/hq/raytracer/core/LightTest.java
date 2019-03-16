@@ -8,8 +8,8 @@ import static org.junit.Assert.assertThat;
 import static ro.scene.hq.raytracer.core.Light.lighting;
 import static ro.scene.hq.raytracer.core.Light.point_light;
 import static ro.scene.hq.raytracer.core.Material.material;
-import static ro.scene.hq.raytracer.core.Pattern.stripe_pattern;
 import static ro.scene.hq.raytracer.core.Sphere.sphere;
+import static ro.scene.hq.raytracer.core.StripePattern.stripe_pattern;
 import static ro.scene.hq.raytracer.core.Tuple.*;
 
 public class LightTest {
