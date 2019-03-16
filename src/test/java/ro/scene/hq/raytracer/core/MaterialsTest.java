@@ -19,4 +19,11 @@ public class MaterialsTest {
         Material m = material();
         assertThat(m.reflective, is(equalTo(0.0)));
     }
+
+    @Test
+    public void transparencyAndRefractiveIndexForDefaultMaterial() {
+        Material m = material();
+        assertThat(m.transparency, is(equalTo(0.0)));
+        assertThat(m.refractiveIndex, is(equalTo(1.0)));
+    }
 }

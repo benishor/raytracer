@@ -1,9 +1,6 @@
 package ro.scene.hq.raytracer.core;
 
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static ro.scene.hq.raytracer.core.Computations.prepare_computations;
 import static ro.scene.hq.raytracer.core.Intersection.hit;
@@ -64,14 +61,15 @@ public class World {
                 comps.normalv,
                 inShadow);
         Tuple reflectedColor = reflected_color(w, comps, remaining);
-        return surface.add(reflectedColor);
+        Tuple refractedColor = refracted_color(w, comps, remaining);
+        return surface.add(reflectedColor).add(refractedColor);
     }
 
     public static Tuple color_at(World w, Ray r, int remaining) {
         List<Intersection> intersections = intersect_world(w, r);
         Optional<Intersection> hitIntersection = hit(intersections);
         if (hitIntersection.isPresent()) {
-            Computations comps = prepare_computations(hitIntersection.get(), r);
+            Computations comps = prepare_computations(hitIntersection.get(), r, Collections.emptyList());
             return shade_hit(w, comps, remaining);
         } else {
             return color(0, 0, 0);
@@ -89,6 +87,39 @@ public class World {
         Ray reflectRay = ray(comps.over_point, comps.reflectv);
         Tuple color = color_at(w, reflectRay, remaining - 1);
         return color.mul(comps.object.material.reflective);
+    }
+
+    public static Tuple refracted_color(World w, Computations comps, int remaining) {
+        if (comps.object.material.transparency <= 0.0) {
+            return color(0, 0, 0);
+        }
+        if (remaining == 0) {
+            return color(0, 0, 0);
+        }
+
+        // Find the ratio of first index of refraction to the second.
+        // (Yup, this is inverted from the definition of Snell's Law.)
+        double n_ratio = comps.n1 / comps.n2;
+        // cos(theta_i) is the same as the dot product of the two vectors
+        double cos_i = dot(comps.eyev, comps.normalv);
+        // Find sin(theta_t)^2 via trigonometric identity
+        double sin2_t = n_ratio * n_ratio * (1.0 - cos_i * cos_i);
+        if (sin2_t > 1.0) {
+            return color(0, 0, 0);
+        }
+        // Find cos(theta_t) via trigonometric identity
+        double cos_t = Math.sqrt(1.0 - sin2_t);
+
+        // Compute the direction of the refracted ray
+        Tuple direction = comps.normalv.mul(n_ratio * cos_i - cos_t).sub(comps.eyev.mul(n_ratio));
+
+        // Create the refracted ray
+        Ray refract_ray = ray(comps.under_point, direction);
+
+        // Find the color of the refracted ray, making sure to multiply
+        // by the transparency value to account for any opacity
+        Tuple color = color_at(w, refract_ray, remaining - 1).mul(comps.object.material.transparency);
+        return color;
     }
 
     public static boolean is_shadowed(World w, Tuple point) {

@@ -3,6 +3,7 @@ package ro.scene.hq.raytracer.core;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -10,9 +11,11 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static ro.scene.hq.raytracer.core.Computations.prepare_computations;
 import static ro.scene.hq.raytracer.core.Intersection.intersection;
+import static ro.scene.hq.raytracer.core.Intersection.intersections;
 import static ro.scene.hq.raytracer.core.Light.point_light;
 import static ro.scene.hq.raytracer.core.Matrix.scaling;
 import static ro.scene.hq.raytracer.core.Matrix.translation;
+import static ro.scene.hq.raytracer.core.PatternsTest.TestPattern.test_pattern;
 import static ro.scene.hq.raytracer.core.Plane.plane;
 import static ro.scene.hq.raytracer.core.Ray.ray;
 import static ro.scene.hq.raytracer.core.Sphere.sphere;
@@ -76,7 +79,7 @@ public class WorldTest {
         Sphere shape = sphere();
         Intersection i = intersection(4, shape);
 
-        Computations comps = prepare_computations(i, r);
+        Computations comps = prepare_computations(i, r, Collections.emptyList());
         assertThat(comps.t, is(equalTo(i.t)));
         assertThat(comps.object, is(i.object));
         assertEqualTuples(comps.point, point(0, 0, -1));
@@ -89,7 +92,7 @@ public class WorldTest {
         Ray r = ray(point(0, 0, -5), vector(0, 0, 1));
         Sphere shape = sphere();
         Intersection i = intersection(4, shape);
-        Computations comps = prepare_computations(i, r);
+        Computations comps = prepare_computations(i, r, Collections.emptyList());
         assertThat(comps.inside, is(false));
     }
 
@@ -98,7 +101,7 @@ public class WorldTest {
         Ray r = ray(point(0, 0, 0), vector(0, 0, 1));
         Sphere shape = sphere();
         Intersection i = intersection(1, shape);
-        Computations comps = prepare_computations(i, r);
+        Computations comps = prepare_computations(i, r, Collections.emptyList());
         assertEqualTuples(comps.point, point(0, 0, 1));
         assertEqualTuples(comps.eyev, vector(0, 0, -1));
         assertThat(comps.inside, is(true));
@@ -114,7 +117,7 @@ public class WorldTest {
         Shape shape = w.objects.get(0);
         Intersection i = intersection(4, shape);
 
-        Computations comps = prepare_computations(i, r);
+        Computations comps = prepare_computations(i, r, Collections.emptyList());
 
         Tuple c = shade_hit(w, comps, BOUNCE_DEPTH);
         assertEqualTuples(c, color(0.38066, 0.47583, 0.2855));
@@ -128,7 +131,7 @@ public class WorldTest {
         Shape shape = w.objects.get(1);
         Intersection i = intersection(0.5, shape);
 
-        Computations comps = prepare_computations(i, r);
+        Computations comps = prepare_computations(i, r, Collections.emptyList());
 
         Tuple c = shade_hit(w, comps, BOUNCE_DEPTH);
         assertEqualTuples(c, color(0.90498, 0.90498, 0.90498));
@@ -196,7 +199,7 @@ public class WorldTest {
         Sphere shape = sphere();
         shape.transform = translation(0, 0, 1);
         Intersection i = intersection(5, shape);
-        Computations comps = prepare_computations(i, r);
+        Computations comps = prepare_computations(i, r, Collections.emptyList());
         assertTrue(comps.over_point.z < -EPSILON / 2.0);
         assertTrue(comps.point.z > comps.over_point.z);
     }
@@ -215,7 +218,7 @@ public class WorldTest {
 
         Ray r = ray(point(0, 0, 5), vector(0, 0, 1));
         Intersection i = intersection(4, s2);
-        Computations comps = prepare_computations(i, r);
+        Computations comps = prepare_computations(i, r, Collections.emptyList());
         Tuple c = shade_hit(w, comps, BOUNCE_DEPTH);
         assertEqualTuples(c, color(0.1, 0.1, 0.1));
     }
@@ -227,7 +230,7 @@ public class WorldTest {
         Shape shape = w.objects.get(1);
         shape.material.ambient = 1;
         Intersection i = intersection(1, shape);
-        Computations comps = prepare_computations(i, r);
+        Computations comps = prepare_computations(i, r, Collections.emptyList());
         Tuple color = reflected_color(w, comps, BOUNCE_DEPTH);
         assertEqualTuples(color, color(0, 0, 0));
     }
@@ -244,7 +247,7 @@ public class WorldTest {
         Ray r = ray(point(0, 0, -3), vector(0, -Math.sqrt(2.0) / 2.0, Math.sqrt(2.0) / 2.0));
         Intersection i = intersection(Math.sqrt(2.0), shape);
 
-        Computations comps = prepare_computations(i, r);
+        Computations comps = prepare_computations(i, r, Collections.emptyList());
         Tuple color = reflected_color(w, comps, BOUNCE_DEPTH);
         assertEqualTuples(color, color(0.19032, 0.2379, 0.14274));
     }
@@ -261,7 +264,7 @@ public class WorldTest {
         Ray r = ray(point(0, 0, -3), vector(0, -Math.sqrt(2.0) / 2.0, Math.sqrt(2.0) / 2.0));
         Intersection i = intersection(Math.sqrt(2.0), shape);
 
-        Computations comps = prepare_computations(i, r);
+        Computations comps = prepare_computations(i, r, Collections.emptyList());
         Tuple color = shade_hit(w, comps, BOUNCE_DEPTH);
         assertEqualTuples(color, color(0.87677, 0.92436, 0.82918));
     }
@@ -298,9 +301,104 @@ public class WorldTest {
         Ray r = ray(point(0, 0, -3), vector(0, -Math.sqrt(2.0) / 2.0, Math.sqrt(2.0) / 2.0));
         Intersection i = intersection(Math.sqrt(2.0), shape);
 
-        Computations comps = prepare_computations(i, r);
+        Computations comps = prepare_computations(i, r, Collections.emptyList());
         Tuple color = reflected_color(w, comps, 0);
         assertEqualTuples(color, color(0, 0, 0));
+    }
+
+    @Test
+    public void theRefractedColorWithAnOpaqueSurface() {
+        World w = default_world();
+        Shape shape = w.objects.get(0);
+        Ray r = ray(point(0, 0, -5), vector(0, 0, 1));
+        List<Intersection> xs = intersections(intersection(4, shape), intersection(6, shape));
+        Computations comps = prepare_computations(xs.get(0), r, xs);
+        Tuple c = refracted_color(w, comps, 5);
+        assertEqualTuples(c, color(0, 0, 0));
+    }
+
+    @Test
+    public void theRefractedColorAtMaximumRecursiveDepth() {
+        World w = default_world();
+        Shape shape = w.objects.get(0);
+        shape.material.transparency = 1.0;
+        shape.material.refractiveIndex = 1.5;
+
+        Ray r = ray(point(0, 0, -5), vector(0, 0, 1));
+        List<Intersection> xs = intersections(intersection(4, shape), intersection(6, shape));
+
+        Computations comps = prepare_computations(xs.get(0), r, xs);
+        Tuple c = refracted_color(w, comps, 0);
+        assertEqualTuples(c, color(0, 0, 0));
+    }
+
+    @Test
+    public void theRefractedColorUnderTotalInternalReflection() {
+        World w = default_world();
+        Shape shape = w.objects.get(0);
+        shape.material.transparency = 1.0;
+        shape.material.refractiveIndex = 1.5;
+
+        Ray r = ray(point(0, 0, Math.sqrt(2.0) / 2.0), vector(0, 1, 0));
+        List<Intersection> xs = intersections(
+                intersection(-Math.sqrt(2.0) / 2.0, shape),
+                intersection(Math.sqrt(2.0) / 2.0, shape));
+
+        Computations comps = prepare_computations(xs.get(1), r, xs);
+        Tuple c = refracted_color(w, comps, 5);
+
+        assertEqualTuples(c, color(0, 0, 0));
+    }
+
+    @Test
+    public void theRefractedColorWithARefractedRay() {
+        World w = default_world();
+
+        Shape A = w.objects.get(0);
+        A.material.ambient = 1;
+        A.material.pattern = test_pattern();
+
+        Shape B = w.objects.get(1);
+        B.material.transparency = 1;
+        B.material.refractiveIndex = 1.5;
+
+        Ray r = ray(point(0, 0, 0.1), vector(0, 1, 0));
+        List<Intersection> xs = intersections(
+                intersection(-0.98999, A),
+                intersection(-0.4899, B),
+                intersection(0.4899, B),
+                intersection(0.9899, A)
+        );
+
+        Computations comps = prepare_computations(xs.get(2), r, xs);
+        Tuple c = refracted_color(w, comps, 5);
+
+        assertEqualTuples(c, color(0, 0.99888, 0.04725));
+    }
+
+    @Test
+    public void shadeHitWithATransparentMaterial() {
+        World w = default_world();
+
+        Plane floor = plane();
+        floor.transform = translation(0, -1, 0);
+        floor.material.transparency = 0.5;
+        floor.material.refractiveIndex = 1.5;
+        w.objects.add(floor);
+
+        Sphere ball = sphere();
+        ball.material.color = color(1, 0, 0);
+        ball.material.ambient = 0.5;
+        ball.transform = translation(0, -3.5, -0.5);
+        w.objects.add(ball);
+
+        Ray r = ray(point(0, 0, -3), vector(0, -Math.sqrt(2.0) / 2.0, Math.sqrt(2.0) / 2.0));
+        List<Intersection> xs = intersections(intersection(Math.sqrt(2.0), floor));
+
+        Computations comps = prepare_computations(xs.get(0), r, xs);
+        Tuple color = shade_hit(w, comps, 5);
+
+        assertEqualTuples(color, color(0.93642, 0.68642, 0.68642));
     }
 
     private void assertEqualTuples(Tuple a, Tuple b) {

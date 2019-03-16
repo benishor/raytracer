@@ -53,7 +53,9 @@ public class CameraRender {
         middle.material.diffuse = 0.3;
         middle.material.specular = 0.2;
         middle.material.shininess = 1;
-        middle.material.reflective = 0.5;
+        middle.material.reflective = 0.0;
+        middle.material.refractiveIndex = 1.5;
+        middle.material.reflective = 0.8;
         middle.transform = translation(0, 1, 0).mul(scaling(1, 1, 1));
 
         World w = world();

@@ -11,6 +11,8 @@ public class Material {
     public double specular = 0.9;
     public double shininess = 200;
     public double reflective = 0.0;
+    public double transparency = 0.0;
+    public double refractiveIndex = 1.0;
 
     public static Material material() {
         return new Material();

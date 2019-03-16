@@ -16,6 +16,13 @@ public class Sphere extends Shape {
         return new Sphere();
     }
 
+    public static Sphere glass_sphere() {
+        Sphere sphere = new Sphere();
+        sphere.material.transparency = 1.0;
+        sphere.material.refractiveIndex = 1.5;
+        return sphere;
+    }
+
     @Override
     protected List<Intersection> localIntersect(Ray r) {
         Tuple sphereToRay = r.origin.sub(origin);

@@ -1,6 +1,9 @@
 package ro.scene.hq.raytracer.core;
 
 
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.core.Is;
+import org.hamcrest.core.IsEqual;
 import org.junit.Test;
 
 import java.util.List;
@@ -200,6 +203,23 @@ public class SpheresTest {
 
         Tuple n = normal_at(s, point(0, Math.sqrt(2.0) / 2.0, -Math.sqrt(2.0) / 2.0));
         assertTupleEquals(n, vector(0, 0.97014, -0.24254));
+    }
+
+    @Test
+    public void aHelperForProducingASphereWithAGlassyMaterial() {
+        Sphere s = glass_sphere();
+        assertEqualMatrices(s.transform, identity(4));
+        assertThat(s.material.transparency, is(equalTo(1.0)));
+        assertThat(s.material.refractiveIndex, is(equalTo(1.5)));
+    }
+
+    private void assertEqualMatrices(Matrix a, Matrix b) {
+        assertThat(a.size, is(equalTo(b.size)));
+        for (int row = 0; row < a.size; row++) {
+            for (int col = 0; col < a.size; col++) {
+                assertThat(areEqual(a.data[row][col], b.data[row][col]), is(true));
+            }
+        }
     }
 
     private void assertTupleEquals(Tuple a, Tuple b) {
