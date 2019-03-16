@@ -16,6 +16,7 @@ import static ro.scene.hq.raytracer.core.CheckersPattern.checkers_pattern;
 import static ro.scene.hq.raytracer.core.Light.point_light;
 import static ro.scene.hq.raytracer.core.Matrix.*;
 import static ro.scene.hq.raytracer.core.Plane.plane;
+import static ro.scene.hq.raytracer.core.Sphere.glass_sphere;
 import static ro.scene.hq.raytracer.core.Sphere.sphere;
 import static ro.scene.hq.raytracer.core.Tuple.*;
 import static ro.scene.hq.raytracer.core.World.world;
@@ -48,15 +49,15 @@ public class CameraRender {
         top.material = bottom.material;
         top.transform = translation(0, 10, 0);
 
-        Sphere middle = sphere();
-        middle.material.color = color(0, 0, 0.4);
-        middle.material.diffuse = 0.3;
-        middle.material.specular = 0.2;
-        middle.material.shininess = 1;
-        middle.material.reflective = 0.0;
+        Sphere middle = glass_sphere();
+        middle.material.color = color(0.1, 0.1, 0.1);
+//        middle.material.diffuse = 0.3;
+//        middle.material.specular = 0.2;
+//        middle.material.shininess = 1;
+//        middle.material.reflective = 0.0;
         middle.material.refractiveIndex = 1.5;
-        middle.material.reflective = 0.8;
-        middle.transform = translation(0, 1, 0).mul(scaling(1, 1, 1));
+        middle.material.transparency = 0.8;
+        middle.transform = translation(0, 1.5, 0).mul(scaling(1.5, 1.5, 1.5));
 
         World w = world();
         w.objects.addAll(Arrays.asList(bottom, top, back, front, left, right, middle));

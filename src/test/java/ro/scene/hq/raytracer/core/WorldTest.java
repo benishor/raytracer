@@ -1,6 +1,5 @@
 package ro.scene.hq.raytracer.core;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -22,13 +21,7 @@ import static ro.scene.hq.raytracer.core.Sphere.sphere;
 import static ro.scene.hq.raytracer.core.Tuple.*;
 import static ro.scene.hq.raytracer.core.World.*;
 
-
 public class WorldTest {
-
-//    @Before
-//    public void setUp() throws Exception {
-//        Shape.NEXT_ID = 1L;
-//    }
 
     private static final int BOUNCE_DEPTH = 5;
 

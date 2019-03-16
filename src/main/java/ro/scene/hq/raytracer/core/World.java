@@ -69,7 +69,7 @@ public class World {
         List<Intersection> intersections = intersect_world(w, r);
         Optional<Intersection> hitIntersection = hit(intersections);
         if (hitIntersection.isPresent()) {
-            Computations comps = prepare_computations(hitIntersection.get(), r, Collections.emptyList());
+            Computations comps = prepare_computations(hitIntersection.get(), r, intersections);
             return shade_hit(w, comps, remaining);
         } else {
             return color(0, 0, 0);
@@ -90,10 +90,11 @@ public class World {
     }
 
     public static Tuple refracted_color(World w, Computations comps, int remaining) {
-        if (comps.object.material.transparency <= 0.0) {
+        if (remaining == 0) {
             return color(0, 0, 0);
         }
-        if (remaining == 0) {
+
+        if (comps.object.material.transparency <= 0.0) {
             return color(0, 0, 0);
         }
 
@@ -114,12 +115,11 @@ public class World {
         Tuple direction = comps.normalv.mul(n_ratio * cos_i - cos_t).sub(comps.eyev.mul(n_ratio));
 
         // Create the refracted ray
-        Ray refract_ray = ray(comps.under_point, direction);
+        Ray refractedRay = ray(comps.under_point, direction);
 
         // Find the color of the refracted ray, making sure to multiply
         // by the transparency value to account for any opacity
-        Tuple color = color_at(w, refract_ray, remaining - 1).mul(comps.object.material.transparency);
-        return color;
+        return color_at(w, refractedRay, remaining - 1).mul(comps.object.material.transparency);
     }
 
     public static boolean is_shadowed(World w, Tuple point) {
