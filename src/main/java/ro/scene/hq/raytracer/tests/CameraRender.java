@@ -13,83 +13,55 @@ import java.util.List;
 import static ro.scene.hq.raytracer.core.Camera.camera;
 import static ro.scene.hq.raytracer.core.Camera.render;
 import static ro.scene.hq.raytracer.core.CheckersPattern.checkers_pattern;
-import static ro.scene.hq.raytracer.core.GradientPattern.gradient_pattern;
 import static ro.scene.hq.raytracer.core.Light.point_light;
-import static ro.scene.hq.raytracer.core.Material.material;
 import static ro.scene.hq.raytracer.core.Matrix.*;
 import static ro.scene.hq.raytracer.core.Plane.plane;
-import static ro.scene.hq.raytracer.core.RingPattern.ring_pattern;
 import static ro.scene.hq.raytracer.core.Sphere.sphere;
-import static ro.scene.hq.raytracer.core.StripePattern.stripe_pattern;
 import static ro.scene.hq.raytracer.core.Tuple.*;
 import static ro.scene.hq.raytracer.core.World.world;
 
 public class CameraRender {
     public static void main(String[] args) throws IOException {
 
-        Plane floor = plane();
-        floor.material.pattern = ring_pattern(color(1, 0, 0), color(0.8, 0.8, 0.8));
-        floor.material.pattern.transform = translation(0, 0, 0.5).mul(scaling(0.3, 0.3, 0.3));
-        floor.material.color = color(1, 0.9, 0.9);
-        floor.material.specular = 0.5;
-        floor.material.reflective = 0.3;
+        Plane bottom = plane();
+        bottom.material.pattern = checkers_pattern(color(1, 1, 1), color(0, 0, 0));
+        bottom.material.specular = 0.5;
+        bottom.material.reflective = 0;
 
         Plane back = plane();
-        back.transform = translation(0, 0, 10).mul(rotation_x(Math.PI/2.0));
-        back.material.pattern = stripe_pattern(color(1, 0, 0), color(0.8, 0.8, 0.8));
-        back.material.pattern.transform = scaling(0.3, 0.3, 0.3).mul(rotation_y(Math.PI/7.0));
-        back.material.color = color(1, 0.9, 0.9);
-        back.material.specular = 0.5;
-        back.material.reflective = 0.3;
+        back.material = bottom.material;
+        back.transform = translation(0, 0, 5).mul(rotation_x(Math.PI/2.0));
 
-//        Sphere left_wall = sphere();
-//        left_wall.transform = translation(0, 0, 5)
-//                .mul(rotation_y(-Math.PI / 4.0))
-//                .mul(rotation_x(Math.PI / 2.0))
-//                .mul(scaling(10, 0.01, 10));
-//        left_wall.material = floor.material;
-//
-//        Sphere right_wall = sphere();
-//        right_wall.transform = translation(0, 0, 5)
-//                .mul(rotation_y(Math.PI / 4.0))
-//                .mul(rotation_x(Math.PI / 2.0))
-//                .mul(scaling(10, 0.01, 10));
-//        right_wall.material = floor.material;
+        Plane front = plane();
+        front.material = bottom.material;
+        front.transform = translation(0, 0, 5).mul(rotation_x(Math.PI/2.0));
+
+        Plane left = plane();
+        left.material = bottom.material;
+        left.transform = translation(-5, 0, 2.5).mul(rotation_y(-Math.PI/2.0).mul(rotation_x(Math.PI/2)));
+
+        Plane right = plane();
+        right.material = bottom.material;
+        right.transform = translation(5, 0, 2.5).mul(rotation_y(Math.PI/2.0).mul(rotation_x(Math.PI/2)));
+
+        Plane top = plane();
+        top.material = bottom.material;
+        top.transform = translation(0, 10, 0);
 
         Sphere middle = sphere();
-        middle.transform = translation(-0.5, 1, 0.5);
-        middle.material = material();
-        middle.material.pattern = checkers_pattern(color(1, 0, 0), color(0.8, 0.8, 0.8));
-        middle.material.pattern.transform = scaling(0.3, 0.3, 0.3);
-        middle.material.color = color(0.1, 1, 0.5);
-        middle.material.diffuse = 0.7;
-        middle.material.specular = 0.3;
+        middle.material.color = color(0, 0, 0.4);
+        middle.material.diffuse = 0.3;
+        middle.material.specular = 0.2;
+        middle.material.shininess = 1;
         middle.material.reflective = 0.5;
-
-        Sphere right = sphere();
-        right.transform = translation(1.5, 0.5, -0.5).mul(scaling(0.5, 0.5, 0.5));
-        right.material = material();
-        right.material.pattern = gradient_pattern(color(1, 0, 0), color(0.2, 1, 0.4));
-        right.material.pattern.transform = rotation_z(Math.PI/6.0);
-        right.material.color = color(0.5, 1, 0.1);
-        right.material.diffuse = 0.7;
-        right.material.specular = 0.3;
-
-        Sphere left = sphere();
-        left.transform = translation(-1.5, 0.33, -0.75).mul(scaling(0.33, 0.33, 0.33));
-        left.material = material();
-        left.material.color = color(1, 0.8, 0.1);
-        left.material.diffuse = 0.7;
-        left.material.specular = 0.3;
+        middle.transform = translation(0, 1, 0).mul(scaling(1, 1, 1));
 
         World w = world();
-//        w.objects.addAll(Arrays.asList(floor, left_wall, right_wall, middle));
-        w.objects.addAll(Arrays.asList(floor, back, middle, right, left));
-        w.light = point_light(point(-10, 10, -10), color(1, 1, 1));
-//        w.light = point_light(point(0, 5, 0), color(1, 1, 1));
+        w.objects.addAll(Arrays.asList(bottom, top, back, front, left, right, middle));
+        w.light = point_light(point(-4, 8, -4.8), color(1, 1, 1));
 
-        Camera c = camera(1024, 768, Math.PI / 3.0);
-        c.transform = view_transform(point(0, 1.5, -5), point(0, 1, 0), vector(0, 1, 0));
+        Camera c = camera(1024, 768, Math.PI / 2.0);
+        c.transform = view_transform(point(0, 1.5, -4.9), point(0, 1, 0), vector(0, 1, 0));
 
         long startTime = System.currentTimeMillis();
         Canvas canvas = render(c, w);
