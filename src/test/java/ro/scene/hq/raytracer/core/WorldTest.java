@@ -13,6 +13,7 @@ import static ro.scene.hq.raytracer.core.Intersection.intersection;
 import static ro.scene.hq.raytracer.core.Light.point_light;
 import static ro.scene.hq.raytracer.core.Matrix.scaling;
 import static ro.scene.hq.raytracer.core.Matrix.translation;
+import static ro.scene.hq.raytracer.core.Plane.plane;
 import static ro.scene.hq.raytracer.core.Ray.ray;
 import static ro.scene.hq.raytracer.core.Sphere.sphere;
 import static ro.scene.hq.raytracer.core.Tuple.*;
@@ -25,6 +26,8 @@ public class WorldTest {
 //    public void setUp() throws Exception {
 //        Shape.NEXT_ID = 1L;
 //    }
+
+    private static final int BOUNCE_DEPTH = 5;
 
     @Test
     public void creatingAWorld() {
@@ -113,7 +116,7 @@ public class WorldTest {
 
         Computations comps = prepare_computations(i, r);
 
-        Tuple c = shade_hit(w, comps);
+        Tuple c = shade_hit(w, comps, BOUNCE_DEPTH);
         assertEqualTuples(c, color(0.38066, 0.47583, 0.2855));
     }
 
@@ -127,7 +130,7 @@ public class WorldTest {
 
         Computations comps = prepare_computations(i, r);
 
-        Tuple c = shade_hit(w, comps);
+        Tuple c = shade_hit(w, comps, BOUNCE_DEPTH);
         assertEqualTuples(c, color(0.90498, 0.90498, 0.90498));
     }
 
@@ -135,7 +138,7 @@ public class WorldTest {
     public void theColorWhenARayMisses() {
         World w = default_world();
         Ray r = ray(point(0, 0, -5), vector(0, 1, 0));
-        Tuple c = color_at(w, r);
+        Tuple c = color_at(w, r, BOUNCE_DEPTH);
         assertEqualTuples(c, color(0, 0, 0));
     }
 
@@ -143,7 +146,7 @@ public class WorldTest {
     public void theColorWhenARayHits() {
         World w = default_world();
         Ray r = ray(point(0, 0, -5), vector(0, 0, 1));
-        Tuple c = color_at(w, r);
+        Tuple c = color_at(w, r, BOUNCE_DEPTH);
         assertEqualTuples(c, color(0.38066, 0.47583, 0.2855));
     }
 
@@ -183,7 +186,7 @@ public class WorldTest {
         Shape inner = w.objects.get(1);
         inner.material.ambient = 1;
         Ray r = ray(point(0, 0, 0.75), vector(0, 0, -1));
-        Tuple c = color_at(w, r);
+        Tuple c = color_at(w, r, BOUNCE_DEPTH);
         assertEqualTuples(c, inner.material.color);
     }
 
@@ -194,7 +197,7 @@ public class WorldTest {
         shape.transform = translation(0, 0, 1);
         Intersection i = intersection(5, shape);
         Computations comps = prepare_computations(i, r);
-        assertTrue(comps.over_point.z < -EPSILON/2.0);
+        assertTrue(comps.over_point.z < -EPSILON / 2.0);
         assertTrue(comps.point.z > comps.over_point.z);
     }
 
@@ -213,8 +216,91 @@ public class WorldTest {
         Ray r = ray(point(0, 0, 5), vector(0, 0, 1));
         Intersection i = intersection(4, s2);
         Computations comps = prepare_computations(i, r);
-        Tuple c = shade_hit(w, comps);
+        Tuple c = shade_hit(w, comps, BOUNCE_DEPTH);
         assertEqualTuples(c, color(0.1, 0.1, 0.1));
+    }
+
+    @Test
+    public void theReflectedColorForANonReflectiveMaterial() {
+        World w = default_world();
+        Ray r = ray(point(0, 0, 0), vector(0, 0, 1));
+        Shape shape = w.objects.get(1);
+        shape.material.ambient = 1;
+        Intersection i = intersection(1, shape);
+        Computations comps = prepare_computations(i, r);
+        Tuple color = reflected_color(w, comps, BOUNCE_DEPTH);
+        assertEqualTuples(color, color(0, 0, 0));
+    }
+
+    @Test
+    public void theReflectedColorForAReflectiveMaterial() {
+        World w = default_world();
+        Shape shape = plane();
+        shape.material.reflective = 0.5;
+        shape.transform = translation(0, -1, 0);
+
+        w.objects.add(shape);
+
+        Ray r = ray(point(0, 0, -3), vector(0, -Math.sqrt(2.0) / 2.0, Math.sqrt(2.0) / 2.0));
+        Intersection i = intersection(Math.sqrt(2.0), shape);
+
+        Computations comps = prepare_computations(i, r);
+        Tuple color = reflected_color(w, comps, BOUNCE_DEPTH);
+        assertEqualTuples(color, color(0.19032, 0.2379, 0.14274));
+    }
+
+    @Test
+    public void shadeHitWithAReflectiveMaterial() {
+        World w = default_world();
+        Shape shape = plane();
+        shape.material.reflective = 0.5;
+        shape.transform = translation(0, -1, 0);
+
+        w.objects.add(shape);
+
+        Ray r = ray(point(0, 0, -3), vector(0, -Math.sqrt(2.0) / 2.0, Math.sqrt(2.0) / 2.0));
+        Intersection i = intersection(Math.sqrt(2.0), shape);
+
+        Computations comps = prepare_computations(i, r);
+        Tuple color = shade_hit(w, comps, BOUNCE_DEPTH);
+        assertEqualTuples(color, color(0.87677, 0.92436, 0.82918));
+    }
+
+    @Test
+    public void colorAtWithMutuallyReflectiveSurfaces() {
+        World w = world();
+        w.light = point_light(point(0, 0, 0), color(1, 1, 1));
+
+        Shape lower = plane();
+        lower.material.reflective = 1;
+        lower.transform = translation(0, -1, 0);
+        w.objects.add(lower);
+
+        Shape upper = plane();
+        upper.material.reflective = 1;
+        upper.transform = translation(0, 1, 0);
+        w.objects.add(upper);
+
+        Ray r = ray(point(0, 0, 0), vector(0, 1, 0));
+        // should terminate successfully, not stack overflow
+        Tuple color = color_at(w, r, BOUNCE_DEPTH);
+    }
+
+    @Test
+    public void theReflectedColorAtMaximumRecursiveDepth() {
+        World w = default_world();
+        Shape shape = plane();
+        shape.material.reflective = 0.5;
+        shape.transform = translation(0, -1, 0);
+
+        w.objects.add(shape);
+
+        Ray r = ray(point(0, 0, -3), vector(0, -Math.sqrt(2.0) / 2.0, Math.sqrt(2.0) / 2.0));
+        Intersection i = intersection(Math.sqrt(2.0), shape);
+
+        Computations comps = prepare_computations(i, r);
+        Tuple color = reflected_color(w, comps, 0);
+        assertEqualTuples(color, color(0, 0, 0));
     }
 
     private void assertEqualTuples(Tuple a, Tuple b) {

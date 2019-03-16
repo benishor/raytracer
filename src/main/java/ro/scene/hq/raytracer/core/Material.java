@@ -10,6 +10,7 @@ public class Material {
     public double diffuse = 0.9;
     public double specular = 0.9;
     public double shininess = 200;
+    public double reflective = 0.0;
 
     public static Material material() {
         return new Material();

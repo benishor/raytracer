@@ -32,6 +32,7 @@ public class CameraRender {
         floor.material.pattern.transform = translation(0, 0, 0.5).mul(scaling(0.3, 0.3, 0.3));
         floor.material.color = color(1, 0.9, 0.9);
         floor.material.specular = 0.5;
+        floor.material.reflective = 0.3;
 
         Plane back = plane();
         back.transform = translation(0, 0, 10).mul(rotation_x(Math.PI/2.0));
@@ -39,6 +40,7 @@ public class CameraRender {
         back.material.pattern.transform = scaling(0.3, 0.3, 0.3).mul(rotation_y(Math.PI/7.0));
         back.material.color = color(1, 0.9, 0.9);
         back.material.specular = 0.5;
+        back.material.reflective = 0.3;
 
 //        Sphere left_wall = sphere();
 //        left_wall.transform = translation(0, 0, 5)
@@ -62,6 +64,7 @@ public class CameraRender {
         middle.material.color = color(0.1, 1, 0.5);
         middle.material.diffuse = 0.7;
         middle.material.specular = 0.3;
+        middle.material.reflective = 0.5;
 
         Sphere right = sphere();
         right.transform = translation(1.5, 0.5, -0.5).mul(scaling(0.5, 0.5, 0.5));

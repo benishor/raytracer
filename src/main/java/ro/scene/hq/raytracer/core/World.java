@@ -53,9 +53,9 @@ public class World {
         return result;
     }
 
-    public static Tuple shade_hit(World w, Computations comps) {
+    public static Tuple shade_hit(World w, Computations comps, int remaining) {
         boolean inShadow = is_shadowed(w, comps.over_point);
-        return lighting(
+        Tuple surface = lighting(
                 comps.object.material,
                 comps.object,
                 w.light,
@@ -63,17 +63,32 @@ public class World {
                 comps.eyev,
                 comps.normalv,
                 inShadow);
+        Tuple reflectedColor = reflected_color(w, comps, remaining);
+        return surface.add(reflectedColor);
     }
 
-    public static Tuple color_at(World w, Ray r) {
+    public static Tuple color_at(World w, Ray r, int remaining) {
         List<Intersection> intersections = intersect_world(w, r);
         Optional<Intersection> hitIntersection = hit(intersections);
         if (hitIntersection.isPresent()) {
             Computations comps = prepare_computations(hitIntersection.get(), r);
-            return shade_hit(w, comps);
+            return shade_hit(w, comps, remaining);
         } else {
             return color(0, 0, 0);
         }
+    }
+
+    public static Tuple reflected_color(World w, Computations comps, int remaining) {
+        if (remaining <= 0) {
+            return color(0, 0, 0);
+        }
+
+        if (comps.object.material.reflective <= 0.0) {
+            return color(0, 0, 0);
+        }
+        Ray reflectRay = ray(comps.over_point, comps.reflectv);
+        Tuple color = color_at(w, reflectRay, remaining - 1);
+        return color.mul(comps.object.material.reflective);
     }
 
     public static boolean is_shadowed(World w, Tuple point) {

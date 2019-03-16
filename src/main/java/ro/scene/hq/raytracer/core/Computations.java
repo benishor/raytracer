@@ -1,8 +1,7 @@
 package ro.scene.hq.raytracer.core;
 
 import static ro.scene.hq.raytracer.core.Sphere.normal_at;
-import static ro.scene.hq.raytracer.core.Tuple.EPSILON;
-import static ro.scene.hq.raytracer.core.Tuple.dot;
+import static ro.scene.hq.raytracer.core.Tuple.*;
 
 public class Computations {
     public double t;
@@ -11,6 +10,7 @@ public class Computations {
     public Tuple over_point;
     public Tuple eyev;
     public Tuple normalv;
+    public Tuple reflectv;
     public boolean inside;
 
     public static Computations prepare_computations(Intersection i, Ray r) {
@@ -29,6 +29,7 @@ public class Computations {
         }
 
         comps.over_point = comps.point.add(comps.normalv.mul(EPSILON));
+        comps.reflectv = reflect(r.direction, comps.normalv);
 
         return comps;
     }

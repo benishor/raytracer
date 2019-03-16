@@ -66,7 +66,7 @@ public class Camera {
             final int yy = y;
             IntStream.range(0, c.hsize).parallel().forEach(x -> {
                 Ray ray = ray_for_pixel(c, x, yy);
-                Tuple color = color_at(w, ray);
+                Tuple color = color_at(w, ray, 5);
                 image.writePixel(x, yy, color);
             });
 //            for (int x = 0; x < c.hsize; x++) {
