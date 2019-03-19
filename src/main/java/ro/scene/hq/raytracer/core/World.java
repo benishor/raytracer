@@ -64,7 +64,7 @@ public class World {
         Tuple refractedColor = refracted_color(w, comps, remaining);
 
         Material material = comps.object.material;
-        if (material.reflective > 0 && material.transparency> 0) {
+        if (material.reflective > 0 && material.transparency > 0) {
             double reflectance = schlick(comps);
             return surface.add(reflectedColor.mul(reflectance)).add(refractedColor.mul(1.0 - reflectance));
         } else {

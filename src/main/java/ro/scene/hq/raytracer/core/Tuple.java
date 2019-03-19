@@ -4,6 +4,7 @@ import java.util.Objects;
 
 public class Tuple {
     public static final double EPSILON = 0.0001;
+    public static final double INFINITY = 1e10;
     public double x;
     public double y;
     public double z;

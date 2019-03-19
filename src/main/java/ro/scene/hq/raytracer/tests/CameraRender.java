@@ -13,6 +13,7 @@ import java.util.List;
 import static ro.scene.hq.raytracer.core.Camera.camera;
 import static ro.scene.hq.raytracer.core.Camera.render;
 import static ro.scene.hq.raytracer.core.CheckersPattern.checkers_pattern;
+import static ro.scene.hq.raytracer.core.Cube.cube;
 import static ro.scene.hq.raytracer.core.Light.point_light;
 import static ro.scene.hq.raytracer.core.Matrix.*;
 import static ro.scene.hq.raytracer.core.Plane.plane;
@@ -49,13 +50,14 @@ public class CameraRender {
         top.material = bottom.material;
         top.transform = translation(0, 10, 0);
 
-        Sphere middle = glass_sphere();
+//        Sphere middle = glass_sphere();
+        Cube middle = cube();
         middle.material.color = color(0.2, 0, 0);
 //        middle.material.diffuse = 0.3;
 //        middle.material.specular = 0.2;
 //        middle.material.shininess = 1;
 //        middle.material.reflective = 0.0;
-        middle.material.refractiveIndex = 1.5;
+        middle.material.refractiveIndex = 1.05;
         middle.material.transparency = 0.9;
         middle.material.reflective = 0.9;
         middle.material.specular = 1;
