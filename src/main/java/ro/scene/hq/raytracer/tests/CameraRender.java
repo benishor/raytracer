@@ -51,24 +51,28 @@ public class CameraRender {
         top.transform = translation(0, 10, 0);
 
 //        Sphere middle = glass_sphere();
-        Cube middle = cube();
-        middle.material.color = color(0.2, 0, 0);
+        Cylinder middle = Cylinder.cylinder();
+        middle.closed = false;
+        middle.minimum = 0;
+        middle.maximum = 3;
+        middle.material.color = color(0.5, 0.5, 0.5);
 //        middle.material.diffuse = 0.3;
 //        middle.material.specular = 0.2;
 //        middle.material.shininess = 1;
 //        middle.material.reflective = 0.0;
-        middle.material.refractiveIndex = 1.05;
-        middle.material.transparency = 0.9;
-        middle.material.reflective = 0.9;
-        middle.material.specular = 1;
-        middle.material.shininess = 300;
-        middle.transform = translation(0, 1.5, 0).mul(scaling(1.5, 1.5, 1.5));
+//        middle.material.refractiveIndex = 1.3;
+//        middle.material.transparency = 0.9;
+        middle.material.reflective = 0;
+        middle.material.specular = 0.5;
+        middle.material.shininess = 1;
+//        middle.transform = translation(0, 1.5, 0).mul(rotation_y(Math.PI/4).mul(scaling(1.5, 1.5, 1.5)));
+        middle.transform = translation(0, 1.0, 0).mul(rotation_y(Math.PI/4).mul(rotation_x(Math.PI/3)));
 
         World w = world();
         w.objects.addAll(Arrays.asList(bottom, top, back, front, left, right, middle));
         w.light = point_light(point(-4, 8, -4.8), color(1, 1, 1));
 
-        Camera c = camera(1024, 768, Math.PI / 2.0);
+        Camera c = camera(200, 200, Math.PI / 2.0);
         c.transform = view_transform(point(0, 1.5, -4.9), point(0, 1, 0), vector(0, 1, 0));
 
         long startTime = System.currentTimeMillis();

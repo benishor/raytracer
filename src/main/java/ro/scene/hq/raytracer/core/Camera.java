@@ -64,6 +64,8 @@ public class Camera {
         return ray(origin, direction);
     }
 
+    private static final int RAYS_PER_PIXEL = 1;
+
     public static Canvas render(Camera c, World w) {
         Random rnd = new Random();
         Canvas image = canvas(c.hsize, c.vsize);
@@ -72,11 +74,14 @@ public class Camera {
             IntStream.range(0, c.hsize).parallel().forEach(x -> {
 
                 Tuple finalColor = color(0, 0, 0);
-                Ray ray;
-
-                for (int i = 0; i < 32; i++) {
-                    ray = ray_for_pixel(c, x, yy, rnd.nextDouble() - 0.5, rnd.nextDouble() - 0.5);
-                    finalColor = finalColor.add(color_at(w, ray, 5));
+                for (int i = 0; i < RAYS_PER_PIXEL; i++) {
+                    if (RAYS_PER_PIXEL == 1) {
+                        Ray ray = ray_for_pixel(c, x, yy);
+                        finalColor = finalColor.add(color_at(w, ray, 5));
+                    } else {
+                        Ray ray = ray_for_pixel(c, x, yy, rnd.nextDouble() - 0.5, rnd.nextDouble() - 0.5);
+                        finalColor = finalColor.add(color_at(w, ray, 5));
+                    }
                 }
 
 //                ray = ray_for_pixel(c, x, yy, -0.5, -0.5);
@@ -94,7 +99,7 @@ public class Camera {
 //                ray = ray_for_pixel(c, x, yy, 0, 0);
 //                finalColor = finalColor.add(color_at(w, ray, 5));
 
-                finalColor = finalColor.div(32.0);
+                finalColor = finalColor.div(RAYS_PER_PIXEL);
 
                 image.writePixel(x, yy, finalColor);
             });

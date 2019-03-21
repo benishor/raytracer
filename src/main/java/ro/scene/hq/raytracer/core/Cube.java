@@ -63,11 +63,11 @@ public class Cube extends Shape {
     protected Tuple localNormalAt(Tuple localPoint) {
         double maxc = Math.max(Math.max(Math.abs(localPoint.x), Math.abs(localPoint.y)), Math.abs(localPoint.z));
         if (areEqual(maxc, Math.abs(localPoint.x))) {
-            return normalize(vector(localPoint.x, 0, 0));
+            return vector(localPoint.x, 0, 0);
         } else if (areEqual(maxc, Math.abs(localPoint.y))) {
-            return normalize(vector(0, localPoint.y, 0));
+            return vector(0, localPoint.y, 0);
         } else {
-            return normalize(vector(0, 0, localPoint.z));
+            return vector(0, 0, localPoint.z);
         }
     }
 }
