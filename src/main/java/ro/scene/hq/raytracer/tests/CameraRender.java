@@ -14,6 +14,7 @@ import static ro.scene.hq.raytracer.core.Camera.camera;
 import static ro.scene.hq.raytracer.core.Camera.render;
 import static ro.scene.hq.raytracer.core.CheckersPattern.checkers_pattern;
 import static ro.scene.hq.raytracer.core.Cube.cube;
+import static ro.scene.hq.raytracer.core.Cylinder.cylinder;
 import static ro.scene.hq.raytracer.core.Light.point_light;
 import static ro.scene.hq.raytracer.core.Matrix.*;
 import static ro.scene.hq.raytracer.core.Plane.plane;
@@ -51,28 +52,46 @@ public class CameraRender {
         top.transform = translation(0, 10, 0);
 
 //        Sphere middle = glass_sphere();
-        Cylinder middle = Cylinder.cylinder();
-        middle.closed = false;
+        Cone middle = Cone.cone();
+        middle.closed = true;
         middle.minimum = 0;
-        middle.maximum = 3;
-        middle.material.color = color(0.5, 0.5, 0.5);
+        middle.maximum = 2;
+        middle.material.color = color(0.1, 0, 0.2);
 //        middle.material.diffuse = 0.3;
 //        middle.material.specular = 0.2;
 //        middle.material.shininess = 1;
 //        middle.material.reflective = 0.0;
 //        middle.material.refractiveIndex = 1.3;
 //        middle.material.transparency = 0.9;
-        middle.material.reflective = 0;
+        middle.material.reflective = 0.2;
         middle.material.specular = 0.5;
-        middle.material.shininess = 1;
+        middle.material.shininess = 10;
 //        middle.transform = translation(0, 1.5, 0).mul(rotation_y(Math.PI/4).mul(scaling(1.5, 1.5, 1.5)));
-        middle.transform = translation(0, 1.0, 0).mul(rotation_y(Math.PI/4).mul(rotation_x(Math.PI/3)));
+        middle.transform = translation(0, 1.5, 0).mul(rotation_x(Math.PI)).mul(scaling(0.5, 1, 0.5));
+
+        //        Sphere middle = glass_sphere();
+        Cylinder middle2 = cylinder();
+        middle2.closed = true;
+        middle2.minimum = 0;
+        middle2.maximum = 2;
+        middle2.material.color = color(0.2, 0, 0.0);
+//        middle.material.diffuse = 0.3;
+//        middle.material.specular = 0.2;
+//        middle.material.shininess = 1;
+//        middle.material.reflective = 0.0;
+//        middle.material.refractiveIndex = 1.3;
+//        middle.material.transparency = 0.9;
+        middle2.material.reflective = 0.05;
+        middle2.material.specular = 0.7;
+        middle2.material.shininess = 100;
+        middle2.transform = translation(-2, 1.5, 0).mul(rotation_x(Math.PI/3));
+//        middle.transform = translation(0, 1.0, 0).mul(rotation_x(Math.PI));
 
         World w = world();
-        w.objects.addAll(Arrays.asList(bottom, top, back, front, left, right, middle));
+        w.objects.addAll(Arrays.asList(bottom, top, back, front, left, right, middle, middle2));
         w.light = point_light(point(-4, 8, -4.8), color(1, 1, 1));
 
-        Camera c = camera(200, 200, Math.PI / 2.0);
+        Camera c = camera(1024, 768, Math.PI / 2.0);
         c.transform = view_transform(point(0, 1.5, -4.9), point(0, 1, 0), vector(0, 1, 0));
 
         long startTime = System.currentTimeMillis();

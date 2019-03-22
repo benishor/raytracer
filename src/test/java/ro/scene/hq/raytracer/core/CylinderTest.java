@@ -26,7 +26,7 @@ public class CylinderTest {
         Cylinder cyl = cylinder();
         assertRayHitsCylinder(point(1, 0, -5), vector(0, 0, 1), cyl, 5, 5);
         assertRayHitsCylinder(point(0, 0, -5), vector(0, 0, 1), cyl, 4, 6);
-        assertRayHitsCylinder(point(0.5, 0, -5), vector(0.1, 1, 1), cyl, 4.80198, 5);
+        assertRayHitsCylinder(point(0.5, 0, -5), vector(0.1, 1, 1), cyl, 6.80798, 7.08872);
     }
 
     @Test
@@ -102,7 +102,7 @@ public class CylinderTest {
     }
 
     private void assertRayHitsCylinder(Tuple rayOrigin, Tuple rayDirection, Cylinder cylinder, double t0, double t1) {
-        Ray ray = ray(rayOrigin, rayDirection);
+        Ray ray = ray(rayOrigin, normalize(rayDirection));
         List<Intersection> xs = cylinder.localIntersect(ray);
         assertThat(xs.size(), is(2));
         assertTrue(areEqual(xs.get(0).t, t0));
