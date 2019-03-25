@@ -5,11 +5,12 @@ import java.util.Objects;
 
 import static ro.scene.hq.raytracer.core.Matrix.*;
 import static ro.scene.hq.raytracer.core.Ray.transform;
-import static ro.scene.hq.raytracer.core.Tuple.normalize;
+import static ro.scene.hq.raytracer.core.Tuple.*;
 
 public abstract class Shape {
     public Matrix transform = identity(4);
     public Material material = Material.material();
+    public Shape parent;
 
     public static void set_transform(Shape s, Matrix transform) {
         s.transform = transform;
@@ -25,11 +26,31 @@ public abstract class Shape {
     protected abstract Tuple localNormalAt(Tuple localPoint);
 
     public static Tuple normal_at(Shape s, Tuple point) {
-        Tuple localPoint = inverse(s.transform).mul(point);
+        Tuple localPoint = s.worldToObject(point);
         Tuple localNormal = s.localNormalAt(localPoint);
-        Tuple worldNormal = transpose(inverse(s.transform)).mul(localNormal);
-        worldNormal.w = 0;
-        return normalize(worldNormal);
+        Tuple worldNormal = normalize(s.normalToWorld(localNormal));
+//        worldNormal.w = 0;
+        return worldNormal;
+    }
+
+    public Tuple worldToObject(Tuple worldPoint) {
+        Matrix allTransforms = identity(4);
+        Shape currentShape = this;
+        while (currentShape != null) {
+            allTransforms = currentShape.transform.mul(allTransforms);
+            currentShape = currentShape.parent;
+        }
+        return inverse(allTransforms).mul(worldPoint);
+    }
+
+    public Tuple normalToWorld(Tuple localNormal) {
+        Tuple currentNormal = normalize(vector(localNormal.x, localNormal.y, localNormal.z));
+        Shape currentShape = this;
+        while (currentShape != null) {
+            currentNormal = normalize(transpose(inverse(currentShape.transform)).mul(currentNormal));
+            currentShape = currentShape.parent;
+        }
+        return currentNormal;
     }
 
     @Override

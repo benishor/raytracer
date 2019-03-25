@@ -91,7 +91,7 @@ public class CameraRender {
         w.objects.addAll(Arrays.asList(bottom, top, back, front, left, right, middle, middle2));
         w.light = point_light(point(-4, 8, -4.8), color(1, 1, 1));
 
-        Camera c = camera(1024, 768, Math.PI / 2.0);
+        Camera c = camera(200, 200, Math.PI / 2.0);
         c.transform = view_transform(point(0, 1.5, -4.9), point(0, 1, 0), vector(0, 1, 0));
 
         long startTime = System.currentTimeMillis();
