@@ -1,6 +1,5 @@
 package ro.scene.hq.raytracer.core;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,6 +9,7 @@ import static ro.scene.hq.raytracer.core.Ray.transform;
 
 public class Group extends Shape {
     public List<Shape> shapes = new LinkedList<>();
+    public String name;
 
     @Override
     protected List<Intersection> localIntersect(Ray r) {

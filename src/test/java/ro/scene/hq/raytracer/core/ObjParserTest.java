@@ -2,6 +2,9 @@ package ro.scene.hq.raytracer.core;
 
 import org.junit.Test;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -97,8 +100,30 @@ public class ObjParserTest {
     }
 
     @Test
-    public void trianglesInGroups() {
-        fail("not implemented yet");
+    public void trianglesInGroups() throws IOException {
+        String pathToObjFile = getClass().getClassLoader().getResource("triangles.obj").getFile();
+        ObjParser parser = ObjParser.parse(pathToObjFile);
+        Group g1 = parser.groupByName("FirstGroup");
+        Group g2 = parser.groupByName("SecondGroup");
+        Triangle t1 = (Triangle) g1.shapes.get(0);
+        Triangle t2 = (Triangle) g2.shapes.get(0);
+
+        assertEqualTuples(t1.p1, parser.vertices.get(0));
+        assertEqualTuples(t1.p2, parser.vertices.get(1));
+        assertEqualTuples(t1.p3, parser.vertices.get(2));
+
+        assertEqualTuples(t2.p1, parser.vertices.get(0));
+        assertEqualTuples(t2.p2, parser.vertices.get(2));
+        assertEqualTuples(t2.p3, parser.vertices.get(3));
+    }
+
+    @Test
+    public void convertingAnObjFileToAGroup() throws IOException {
+        String pathToObjFile = getClass().getClassLoader().getResource("triangles.obj").getFile();
+        ObjParser parser = ObjParser.parse(pathToObjFile);
+        Group g = parser.toGroup();
+        assertThat(g.shapes.contains(parser.groupByName("FirstGroup")), is(true));
+        assertThat(g.shapes.contains(parser.groupByName("SecondGroup")), is(true));
     }
 
     private void assertEqualTuples(Tuple a, Tuple b) {
